@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/c12"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#2D2B33"
+    tools:context=".MainActivity">
+
+    <ImageButton
+        android:id="@+id/actionBtn"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:backgroundTint="#00FFFFFF"
+        android:contentDescription="@string/action_button"
+        android:scaleType="center"
+        android:src="@drawable/ic_baseline_radio_button_checked_24"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView"
+        app:layout_constraintVertical_bias="0.01" />
+
+    <ImageButton
+        android:id="@+id/loadImgBtn"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="#00FFFFFF"
+        android:contentDescription="@string/load_image_button"
+        android:longClickable="false"
+        android:scaleType="center"
+        android:src="@drawable/ic_round_add_24"
+        android:visibility="visible"
+        app:layout_constraintEnd_toStartOf="@+id/actionBtn"
+        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="150dp"
+        android:background="#383542"
+        android:scaleType="centerInside"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <HorizontalScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="#2D2B33"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/actionBtn">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_margin="5dp"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginTop="5dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/greenFilterBtn"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="10dp"
+                android:layout_weight="1"
+                android:background="#00FFFFFF"
+                android:backgroundTint="#00FFFFFF"
+                android:backgroundTintMode="screen"
+                android:drawableTop="@drawable/ic_baseline_photo_size_select_large_24"
+                android:fontFamily="@font/source_sans_pro_light"
+                android:includeFontPadding="false"
+                android:text="@string/ScaleAndRotate"
+                android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/blurBtn"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="10dp"
+                android:layout_weight="1"
+                android:background="#00FFFFFF"
+                android:backgroundTint="#00FFFFFF"
+                android:drawableTop="@drawable/ic_round_photo_filter_24"
+                android:fontFamily="@font/source_sans_pro_light"
+                android:includeFontPadding="false"
+                android:text="@string/filters"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+    </HorizontalScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

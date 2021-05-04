@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Team13</string>
+    <string name="resize_button">Resize Button</string>
+    <string name="scale">scale</string>
+    <string name="load_image_button">Load Image Button</string>
+    <string name="action_button">action_button</string>
+    <string name="imgView">imgView</string>
+    <string name="filters">Filters</string>
+    <string name="ScaleAndRotate">Scale / Rotate</string>
+    <string name="GreenFilter">Green Filter</string>
+    <string name="Blur">Blur</string>
+    <string name="Median">Median</string>
+    <string name="Contrast">Contrast</string>
+</resources>
+
+
