@@ -120,6 +120,20 @@
                 android:text="@string/Contrast"
                 android:textSize="12sp" />
 
+            <Button
+                android:id="@+id/sharpnessBtn"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="10dp"
+                android:layout_weight="1"
+                android:background="#00FFFFFF"
+                android:backgroundTint="#00FFFFFF"
+                android:drawableTop="@drawable/ic_baseline_cancel_24"
+                android:fontFamily="@font/source_sans_pro_light"
+                android:includeFontPadding="false"
+                android:text="@string/Sharpness"
+                android:textSize="12sp" />
+
         </LinearLayout>
     </HorizontalScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -41,6 +41,10 @@ class FiltersActivity : AppCompatActivity() {
         contrastBtn.setOnClickListener{
             contrastFilter()
         }
+
+        sharpnessBtn.setOnClickListener{
+            increaseSharpness()
+        }
     }
 
     private fun getImage(){
@@ -414,6 +418,82 @@ class FiltersActivity : AppCompatActivity() {
 
                 val newPixel: Int = Color.argb(pixelAlpha, pixelRed, pixelGreen, pixelBlue)
                 newPicture.setPixel(x, y, newPixel)
+            }
+        }
+
+        imageView1.setImageBitmap(newPicture)
+    }
+
+    private fun increaseSharpness() {
+
+        val foldingMatrix = Array(3, { Array(3, {0}) })
+        foldingMatrix[0] = arrayOf(-1, -1, -1)
+        foldingMatrix[1] = arrayOf(-1, 9, -1)
+        foldingMatrix[2] = arrayOf(-1, -1, -1)
+
+        val imageView1: ImageView = findViewById(R.id.imageView)
+        val bitmap1 = (imageView1.getDrawable() as BitmapDrawable).bitmap
+        val pictureWidth: Int = bitmap1.getWidth()
+        val pictureHeight: Int = bitmap1.getHeight()
+        val newPicture = Bitmap.createBitmap(pictureWidth, pictureHeight, bitmap1.config)
+
+        for (i in 1 until pictureWidth - 1) {
+            for (j in 1 until pictureHeight - 1) {
+
+                val pixelColor: Int = bitmap1.getPixel(i, j)
+                var pixelAlpha: Int = 0
+                var pixelRed: Int = 0
+                var pixelGreen: Int = 0
+                var pixelBlue: Int = 0
+
+                for (k in (i - 1)..(i + 1)) {
+                    for (l in (j - 1)..(j + 1)) {
+
+                        val currentPixelColor: Int = bitmap1.getPixel(k, l)
+                        val currentPixelAlpha: Int = Color.alpha(currentPixelColor)
+                        val currentPixelRed: Int = Color.red(currentPixelColor)
+                        val currentPixelGreen: Int = Color.green(currentPixelColor)
+                        val currentPixelBlue: Int = Color.blue(currentPixelColor)
+
+                        pixelAlpha += foldingMatrix[k - i + 1][l - j + 1] * currentPixelAlpha
+                        pixelRed += foldingMatrix[k - i + 1][l - j + 1] * currentPixelRed
+                        pixelGreen += foldingMatrix[k - i + 1][l - j + 1] * currentPixelGreen
+                        pixelBlue += foldingMatrix[k - i + 1][l - j + 1] * currentPixelBlue
+                    }
+                }
+
+                if (pixelAlpha > 255) {
+                    pixelAlpha = 255
+                } else {
+                    if (pixelAlpha < 0) {
+                        pixelAlpha = 0
+                    }
+                }
+                if (pixelRed > 255) {
+                    pixelRed = 255
+                } else {
+                    if (pixelRed < 0) {
+                        pixelRed = 0
+                    }
+                }
+                if (pixelGreen > 255) {
+                    pixelGreen = 255
+                } else {
+                    if (pixelGreen < 0) {
+                        pixelGreen = 0
+                    }
+                }
+                if (pixelBlue > 255) {
+                    pixelBlue = 255
+                } else {
+                    if (pixelBlue < 0) {
+                        pixelBlue = 0
+                    }
+                }
+
+                val newPixel: Int = Color.argb(pixelAlpha, pixelRed, pixelGreen, pixelBlue)
+                newPicture.setPixel(i, j, newPixel)
+
             }
         }
 

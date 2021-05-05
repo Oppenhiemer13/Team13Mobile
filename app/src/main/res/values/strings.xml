@@ -11,6 +11,7 @@
     <string name="Blur">Blur</string>
     <string name="Median">Median</string>
     <string name="Contrast">Contrast</string>
+    <string name="Sharpness">Sharpness</string>
 </resources>
 
 
