@@ -100,13 +100,13 @@ class FiltersActivity : AppCompatActivity() {
 
         val valueSeekBar: SeekBar = findViewById(R.id.seekBar);
         val currentNumberOfSeekBar: Int = valueSeekBar.progress
-        val sigmaValue: Double = currentNumberOfSeekBar / 10.0
+        var sigmaValue: Double = currentNumberOfSeekBar / 15.0
+        if (sigmaValue == 0.0) {
+            sigmaValue = 1.0
+        }
         var sizeArr: Int = (sigmaValue * 3).toInt()
         if (sizeArr % 2 == 0) {
             sizeArr += 1
-        }
-        if (sizeArr < 3) {
-            sizeArr = 3
         }
         var gaussianDistribution = DoubleArray(sizeArr, { 0.0 })
 
@@ -222,7 +222,7 @@ class FiltersActivity : AppCompatActivity() {
 
         val valueSeekBar: SeekBar = findViewById(R.id.seekBar);
         val currentNumberOfSeekBar: Int = valueSeekBar.progress
-        val sigmaValue: Double = currentNumberOfSeekBar / 10.0
+        val sigmaValue: Double = currentNumberOfSeekBar / 15.0
         var sizeArr: Int = (sigmaValue * 3).toInt()
         if (sizeArr % 2 == 0) {
             sizeArr += 1
