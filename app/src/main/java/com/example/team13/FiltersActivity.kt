@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.ImageDecoder
 import android.graphics.drawable.BitmapDrawable
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageView
@@ -46,8 +47,11 @@ class FiltersActivity : AppCompatActivity() {
     }
 
     private fun getImage(){
-        val selectedImage = intent.getParcelableExtra<Bitmap>("BitmapImage")
-        imageView.setImageBitmap(selectedImage)
+        val selectedImageURI = intent.getStringExtra("ImageUri")!!.toUri()
+        val source = ImageDecoder.createSource(this.contentResolver, selectedImageURI)
+        val bmpImage = ImageDecoder.decodeBitmap(source).copy(Bitmap.Config.RGBA_F16, true)
+
+        imageView.setImageBitmap(bmpImage)
     }
 
     private fun greenFilter() {

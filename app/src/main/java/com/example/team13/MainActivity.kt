@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
+import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
@@ -24,11 +25,10 @@ class MainActivity : AppCompatActivity() {
 
     private val RESULT_LOAD_IMG = 1000
     private val RESULT_CALL_CAMERA = 1001
-    private val RESULT_SAVE_IMG = 1002
 
     companion object{
-        lateinit var transmissionImg : Bitmap
-        lateinit var cameraURI : URI
+        lateinit var transmissionImg : String
+        var cameraUri : Uri? = null
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,19 +51,25 @@ class MainActivity : AppCompatActivity() {
         }
 
         cameraBtn.setOnClickListener{
-            val callCameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-            startActivityForResult(callCameraIntent, RESULT_CALL_CAMERA)
+            val values = ContentValues()
+            values.put(MediaStore.Images.Media.TITLE, "New Picture")
+            values.put(MediaStore.Images.Media.DESCRIPTION, "From the Camera")
+            cameraUri =  contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+
+            val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, cameraUri)
+            startActivityForResult(cameraIntent, RESULT_CALL_CAMERA)
         }
 
         scaleBtn.setOnClickListener{
             val intent = Intent(this, ScaleActivity::class.java)
-            intent.putExtra("BitmapImage", transmissionImg)
+            intent.putExtra("ImageUri", transmissionImg)
             startActivity(intent)
         }
 
         filtersBtn.setOnClickListener{
             val intent = Intent(this, FiltersActivity::class.java)
-            intent.putExtra("BitmapImage", transmissionImg)
+            intent.putExtra("ImageUri", transmissionImg)
             startActivity(intent)
         }
     }
@@ -117,13 +123,20 @@ class MainActivity : AppCompatActivity() {
                 val source = ImageDecoder.createSource(this.contentResolver, selectedImageURI)
                 val bmpImage = ImageDecoder.decodeBitmap(source).copy(Bitmap.Config.RGBA_F16, true)
 
-                transmissionImg = bmpImage
+                transmissionImg = selectedImageURI.toString()
                 imageView.setImageBitmap(bmpImage)
             }
         }
         else if(resultCode == Activity.RESULT_OK && requestCode == RESULT_CALL_CAMERA){
-            val img = data?.extras?.get("data") as Bitmap
-            imageView.setImageBitmap(img)
+
+            if (cameraUri != null) {
+
+                val source = ImageDecoder.createSource(this.contentResolver, cameraUri!!)
+                val bmpImage = ImageDecoder.decodeBitmap(source).copy(Bitmap.Config.RGBA_F16, true)
+
+                transmissionImg = cameraUri!!.toString()
+                imageView.setImageBitmap(bmpImage)
+            }
         }
     }
 
