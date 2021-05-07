@@ -46,6 +46,12 @@ class MainActivity : AppCompatActivity() {
             intent.putExtra("URI", transmissionImg)
             startActivity(intent)
         }
+
+        unsharpMaksBtn.setOnClickListener{
+            val intent = Intent(this, UnsharpMaskActivity::class.java)
+            intent.putExtra("URI", transmissionImg)
+            startActivity(intent)
+        }
     }
 
     private fun isEnabledCheck() {

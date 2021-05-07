@@ -12,6 +12,7 @@
     <string name="Median">Median</string>
     <string name="Contrast">Contrast</string>
     <string name="Sharpness">Sharpness</string>
+    <string name="UnsharpMask">UnsharpMask</string>
 </resources>
 
 
