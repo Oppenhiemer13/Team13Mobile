@@ -2,13 +2,9 @@ package com.example.team13
 
 import android.graphics.Bitmap
 import android.graphics.Color
-import android.graphics.ImageDecoder
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.core.graphics.drawable.toBitmap
-import androidx.core.net.toUri
-import kotlinx.android.synthetic.main.activity_main.actionBtn
-import kotlinx.android.synthetic.main.activity_main.imageView
 import kotlinx.android.synthetic.main.scale_activity.*
 
 class ScaleActivity : AppCompatActivity() {
@@ -24,14 +20,8 @@ class ScaleActivity : AppCompatActivity() {
     }
 
     private fun getImage(){
-        val selectedImageURI = intent.getStringExtra("URI")?.toUri()
-
-        if(selectedImageURI != null){
-
-            val source = ImageDecoder.createSource(this.contentResolver, selectedImageURI)
-            val bmpImage = ImageDecoder.decodeBitmap(source).copy(Bitmap.Config.RGBA_F16, true)
-            imageView.setImageBitmap(bmpImage)
-        }
+        val selectedImage = intent.getParcelableExtra<Bitmap>("BitmapImage")
+        imageView.setImageBitmap(selectedImage)
     }
 
     private fun interpolation(){

@@ -10,10 +10,8 @@ import android.widget.ImageView
 import android.widget.SeekBar
 import androidx.core.net.toUri
 import kotlinx.android.synthetic.main.activity_filters.*
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_main.blurBtn
-import kotlinx.android.synthetic.main.activity_main.greenFilterBtn
 import kotlinx.android.synthetic.main.activity_main.imageView
+import kotlinx.android.synthetic.main.scale_activity.*
 import kotlin.math.PI
 import kotlin.math.pow
 import kotlin.math.roundToInt
@@ -48,14 +46,8 @@ class FiltersActivity : AppCompatActivity() {
     }
 
     private fun getImage(){
-        val selectedImageURI = intent.getStringExtra("URI")?.toUri()
-
-        if(selectedImageURI != null){
-
-            val source = ImageDecoder.createSource(this.contentResolver, selectedImageURI)
-            val bmpImage = ImageDecoder.decodeBitmap(source).copy(Bitmap.Config.RGBA_F16, true)
-            imageView.setImageBitmap(bmpImage)
-        }
+        val selectedImage = intent.getParcelableExtra<Bitmap>("BitmapImage")
+        imageView.setImageBitmap(selectedImage)
     }
 
     private fun greenFilter() {
