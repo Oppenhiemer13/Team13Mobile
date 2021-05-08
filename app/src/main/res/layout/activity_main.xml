@@ -127,4 +127,14 @@
         </LinearLayout>
     </HorizontalScrollView>
 
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="25dp"
+        android:layout_marginBottom="19dp"
+        android:text="Button"
+        app:layout_constraintBottom_toTopOf="@+id/ScrollMain"
+        app:layout_constraintStart_toEndOf="@+id/cameraBtn" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

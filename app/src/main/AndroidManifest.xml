@@ -20,6 +20,7 @@
         android:theme="@style/Theme.Design.NoActionBar"
         tools:ignore="ExtraText">
         <activity android:name=".FiltersActivity"></activity>
+        <activity android:name=".TestActivity"></activity>
         <activity android:name=".ScaleActivity" />
         <activity android:name=".UnsharpMaskActivity" />
         <activity android:name=".MainActivity">

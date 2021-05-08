@@ -78,6 +78,11 @@ class MainActivity : AppCompatActivity() {
             intent.putExtra("BitmapImage", transmissionImg)
             startActivity(intent)
         }
+
+        button.setOnClickListener{
+            val intent = Intent(this, TestActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun isEnabledCheck() {
