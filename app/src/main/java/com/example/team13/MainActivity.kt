@@ -69,7 +69,7 @@ class MainActivity : AppCompatActivity() {
 
         unsharpMaksBtn.setOnClickListener{
             val intent = Intent(this, UnsharpMaskActivity::class.java)
-            intent.putExtra("URI", transmissionImg)
+            intent.putExtra("BitmapImage", transmissionImg)
             startActivity(intent)
         }
     }
