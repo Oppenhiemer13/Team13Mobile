@@ -89,7 +89,7 @@ class MainActivity : AppCompatActivity() {
             startNewIntent(this, FiltersActivity::class.java)
         }
 
-        unsharpMaksBtn.setOnClickListener{
+        unsharpMaskBtn.setOnClickListener{
             startNewIntent(this, UnsharpMaskActivity::class.java)
         }
 
@@ -262,7 +262,7 @@ class MainActivity : AppCompatActivity() {
         faceDetBtn.isEnabled = false
         scaleBtn.isEnabled = false
         filtersBtn.isEnabled = false
-        unsharpMaksBtn.isEnabled = false
+        unsharpMaskBtn.isEnabled = false
     }
 
     private fun enableButtons(){
@@ -270,7 +270,7 @@ class MainActivity : AppCompatActivity() {
         faceDetBtn.isEnabled = true
         scaleBtn.isEnabled = true
         filtersBtn.isEnabled = true
-        unsharpMaksBtn.isEnabled = true
+        unsharpMaskBtn.isEnabled = true
     }
 }
 
