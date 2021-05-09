@@ -22,6 +22,7 @@
         <activity android:name=".FiltersActivity"></activity>
         <activity android:name=".ScaleActivity" />
         <activity android:name=".UnsharpMaskActivity" />
+        <activity android:name=".LinearFilteringActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

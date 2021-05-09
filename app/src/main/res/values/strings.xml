@@ -13,6 +13,9 @@
     <string name="Contrast">Contrast</string>
     <string name="Sharpness">Sharpness</string>
     <string name="UnsharpMask">UnsharpMask</string>
+    <string name="Start">Start</string>
+    <string name="Finish">Finish</string>
+    <string name="Bilinear">Bilinear</string>
 </resources>
 
 

@@ -17,7 +17,6 @@ import androidx.core.app.ActivityCompat
 import androidx.core.graphics.drawable.toBitmap
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.OutputStream
-import java.net.URI
 import java.util.*
 
 
@@ -73,9 +72,9 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        unsharpMaksBtn.setOnClickListener{
+        unsharpMaskBtn.setOnClickListener{
             val intent = Intent(this, UnsharpMaskActivity::class.java)
-            intent.putExtra("BitmapImage", transmissionImg)
+            intent.putExtra("ImageUri", transmissionImg)
             startActivity(intent)
         }
     }
