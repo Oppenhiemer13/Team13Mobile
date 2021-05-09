@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/c12"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    style="@style/Team13Style"
     android:background="#2D2B33"
     tools:context=".MainActivity">
 
@@ -19,6 +18,7 @@
         android:longClickable="false"
         android:scaleType="center"
         android:src="@drawable/ic_round_add_24"
+        android:tint="@color/sel_btn"
         android:visibility="visible"
         app:layout_constraintEnd_toStartOf="@+id/actionBtn"
         app:layout_constraintTop_toBottomOf="@+id/imageView" />
@@ -44,6 +44,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:background="#00FFFFFF"
+        android:tint="@color/sel_btn"
         app:layout_constraintStart_toEndOf="@+id/actionBtn"
         app:layout_constraintTop_toBottomOf="@+id/imageView"
         app:srcCompat="@drawable/ic_baseline_camera_24" />
@@ -53,7 +54,7 @@
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:background="@drawable/ic_baseline_radio_button_checked_24"
-        android:backgroundTint="#77CF6F"
+        android:backgroundTint="@color/sel_btn"
         android:fontFamily="@font/source_sans_pro"
         android:text="Save"
         android:textColor="#2D2B33"
@@ -61,6 +62,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView" />
+
+    <ImageButton
+        android:id="@+id/faceDetBtn"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="16dp"
+        android:background="#00FFFFFF"
+        android:tint="@color/sel_btn"
+        app:layout_constraintStart_toEndOf="@+id/cameraBtn"
+        app:layout_constraintTop_toBottomOf="@+id/imageView"
+        app:srcCompat="@drawable/ic_baseline_face_24" />
 
     <HorizontalScrollView
         android:id="@+id/ScrollMain"
@@ -126,5 +139,6 @@
 
         </LinearLayout>
     </HorizontalScrollView>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
