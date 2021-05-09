@@ -3,6 +3,7 @@ package com.example.team13
 import android.Manifest
 import android.app.Activity
 import android.content.ContentValues
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -10,11 +11,14 @@ import android.graphics.ImageDecoder
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.graphics.drawable.toBitmap
 import kotlinx.android.synthetic.main.activity_main.*
 import org.opencv.android.BaseLoaderCallback
 import org.opencv.android.LoaderCallbackInterface
@@ -28,6 +32,8 @@ import org.opencv.imgproc.Imgproc
 import org.opencv.imgproc.Imgproc.cvtColor
 import org.opencv.objdetect.CascadeClassifier
 import java.io.File
+import java.io.OutputStream
+import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -35,32 +41,28 @@ class MainActivity : AppCompatActivity() {
     private val RESULT_LOAD_IMG = 1000
     private val RESULT_CALL_CAMERA = 1001
 
-    companion object{
-        lateinit var transmissionImg : String
-        var cameraUri : Uri? = null
+    private var transmissionImg : String = ""
+    private var cameraUri : Uri? = null
 
-        lateinit var main : Mat
-        lateinit var copy : Mat
-
-        var cascFile: File? = null
-        var faceDetector: CascadeClassifier? = null
-    }
+    lateinit var main : Mat
+    lateinit var copy : Mat
+    var cascFile: File? = null
+    var faceDetector: CascadeClassifier? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        loadImgBtn.isEnabled = false
-        cameraBtn.isEnabled = false
+        disableButtons()
         isEnabledCheck()
 
         actionBtn.setOnClickListener {
-
+            saveToGallery()
         }
 
         loadImgBtn.setOnClickListener {
-            val photoPicker = Intent(Intent.ACTION_GET_CONTENT);
+            val photoPicker = Intent(Intent.ACTION_GET_CONTENT)
             photoPicker.type = "image/*"
             startActivityForResult(photoPicker, RESULT_LOAD_IMG)
         }
@@ -80,25 +82,100 @@ class MainActivity : AppCompatActivity() {
         }
 
         scaleBtn.setOnClickListener{
-            val intent = Intent(this, ScaleActivity::class.java)
-            intent.putExtra("ImageUri", transmissionImg)
-            startActivity(intent)
+            startNewIntent(this, ScaleActivity::class.java)
         }
 
         filtersBtn.setOnClickListener{
-            val intent = Intent(this, FiltersActivity::class.java)
-            intent.putExtra("ImageUri", transmissionImg)
-            startActivity(intent)
+            startNewIntent(this, FiltersActivity::class.java)
         }
 
         unsharpMaksBtn.setOnClickListener{
-            val intent = Intent(this, UnsharpMaskActivity::class.java)
-            intent.putExtra("BitmapImage", transmissionImg)
-            startActivity(intent)
+            startNewIntent(this, UnsharpMaskActivity::class.java)
         }
 
-        button.setOnClickListener{
-            imageView.setImageBitmap(peopleDetect())
+        faceDetBtn.setOnClickListener{
+            imageView.setImageBitmap(faceDetect())
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        if (requestCode == 111 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            loadImgBtn.isEnabled = true
+        }
+
+        if (requestCode == 112 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            cameraBtn.isEnabled = true
+        }
+
+        if (requestCode == 113 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            actionBtn.isEnabled = true
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {   //вывод картинки на ImageView
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (resultCode == Activity.RESULT_OK && requestCode == RESULT_LOAD_IMG) {
+
+            val selectedImageURI = data?.data
+
+            if (selectedImageURI != null) {
+
+                val source = ImageDecoder.createSource(this.contentResolver, selectedImageURI)
+                val bmpImage = ImageDecoder.decodeBitmap(source).copy(Bitmap.Config.ARGB_8888, true)
+
+                transmissionImg = selectedImageURI.toString()
+                imageView.setImageBitmap(bmpImage)
+                enableButtons()
+            }
+        }
+        else if(resultCode == Activity.RESULT_OK && requestCode == RESULT_CALL_CAMERA){
+
+            if (cameraUri != null) {
+
+                val source = ImageDecoder.createSource(this.contentResolver, cameraUri!!)
+                val bmpImage = ImageDecoder.decodeBitmap(source).copy(Bitmap.Config.ARGB_8888, true)
+
+                transmissionImg = cameraUri!!.toString()
+                imageView.setImageBitmap(bmpImage)
+                enableButtons()
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (!OpenCVLoader.initDebug()) {
+            Log.d(
+                "OpenCV",
+                "Internal OpenCV library not found. Using OpenCV Manager for initialization"
+            )
+            OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, this, mLoaderCallback)
+        } else {
+            Log.d("OpenCV", "OpenCV library found inside package. Using it!")
+            mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS)
+        }
+    }
+
+    private val mLoaderCallback: BaseLoaderCallback = object : BaseLoaderCallback(this) {
+        override fun onManagerConnected(status: Int) {
+            when (status) {
+                SUCCESS -> {
+                    Log.i("OpenCV", "OpenCV loaded successfully")
+                    main = Mat()
+                    copy = Mat()
+
+                    val cascadeDir = getDir("cascade", MODE_PRIVATE)
+                    cascFile = File(cascadeDir, "haarcascade_frontalface_alt2.xml")
+
+                    faceDetector = CascadeClassifier(cascFile!!.absolutePath)
+                }
+                else -> {
+                    super.onManagerConnected(status)
+                }
+            }
         }
     }
 
@@ -131,90 +208,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) { //доступ к данным
-            super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-
-        if (requestCode == 111 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            loadImgBtn.isEnabled = true
-        }
-
-        if (requestCode == 112 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            cameraBtn.isEnabled = true
-        }
-
-        if (requestCode == 113 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            actionBtn.isEnabled = true
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {   //вывод картинки на ImageView
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (resultCode == Activity.RESULT_OK && requestCode == RESULT_LOAD_IMG) {
-
-            val selectedImageURI = data?.data
-
-            if (selectedImageURI != null) {
-
-                val source = ImageDecoder.createSource(this.contentResolver, selectedImageURI)
-                val bmpImage = ImageDecoder.decodeBitmap(source).copy(Bitmap.Config.ARGB_8888, true)
-
-                transmissionImg = selectedImageURI.toString()
-                imageView.setImageBitmap(bmpImage)
-            }
-        }
-        else if(resultCode == Activity.RESULT_OK && requestCode == RESULT_CALL_CAMERA){
-
-            if (cameraUri != null) {
-
-                val source = ImageDecoder.createSource(this.contentResolver, cameraUri!!)
-                val bmpImage = ImageDecoder.decodeBitmap(source).copy(Bitmap.Config.ARGB_8888, true)
-
-                transmissionImg = cameraUri!!.toString()
-                imageView.setImageBitmap(bmpImage)
-            }
-        }
-    }
-
-    private val mLoaderCallback: BaseLoaderCallback = object : BaseLoaderCallback(this) {
-        override fun onManagerConnected(status: Int) {
-            when (status) {
-                SUCCESS -> {
-                    Log.i("OpenCV", "OpenCV loaded successfully")
-                    main = Mat()
-                    copy = Mat()
-
-                    val cascadeDir = getDir("cascade", MODE_PRIVATE)
-                    cascFile = File(cascadeDir, "haarcascade_frontalface_alt2.xml")
-
-                    faceDetector = CascadeClassifier(cascFile!!.absolutePath)
-                }
-                else -> {
-                    super.onManagerConnected(status)
-                }
-            }
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        if (!OpenCVLoader.initDebug()) {
-            Log.d(
-                "OpenCV",
-                "Internal OpenCV library not found. Using OpenCV Manager for initialization"
-            )
-            OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, this, mLoaderCallback)
-        } else {
-            Log.d("OpenCV", "OpenCV library found inside package. Using it!")
-            mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS)
-        }
-    }
-
-    fun peopleDetect(): Bitmap? {
+    private fun faceDetect(): Bitmap {
         val imageView = findViewById<ImageView>(R.id.imageView)
         val bitmap = (imageView.drawable as BitmapDrawable).bitmap
 
@@ -238,6 +232,45 @@ class MainActivity : AppCompatActivity() {
 
         Utils.matToBitmap(main, bitmap)
         return bitmap
+    }
+
+    private fun saveToGallery() {
+        val bitmap = imageView.drawable.toBitmap()
+        val fos : OutputStream
+        val resolver = contentResolver
+        val contentValues = ContentValues()
+        contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, "test")
+        contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/jpg")
+        contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
+        val imageUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+        fos = resolver.openOutputStream(Objects.requireNonNull(imageUri)!!)!!
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100,fos)
+        Objects.requireNonNull<OutputStream?>(fos)
+        Toast.makeText(this, "Image saved", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun <T> startNewIntent(context: Context, destinationClass: Class<T>) {
+        val intent = Intent(context, destinationClass)
+        intent.putExtra("ImageUri", transmissionImg)
+        startActivity(intent)
+    }
+
+    private fun disableButtons(){
+        loadImgBtn.isEnabled = false
+        cameraBtn.isEnabled = false
+        actionBtn.isEnabled = false
+        faceDetBtn.isEnabled = false
+        scaleBtn.isEnabled = false
+        filtersBtn.isEnabled = false
+        unsharpMaksBtn.isEnabled = false
+    }
+
+    private fun enableButtons(){
+        actionBtn.isEnabled = true
+        faceDetBtn.isEnabled = true
+        scaleBtn.isEnabled = true
+        filtersBtn.isEnabled = true
+        unsharpMaksBtn.isEnabled = true
     }
 }
 

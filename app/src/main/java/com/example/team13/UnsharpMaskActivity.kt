@@ -13,6 +13,7 @@ import kotlinx.android.synthetic.main.activity_filters.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main.imageView
 import kotlinx.android.synthetic.main.activity_unsharpmask.*
+import kotlinx.android.synthetic.main.scale_activity.*
 import kotlin.math.PI
 import kotlin.math.pow
 import kotlin.math.roundToInt
@@ -31,8 +32,11 @@ class UnsharpMaskActivity: AppCompatActivity() {
     }
 
     private fun getImage(){
-        val selectedImage = intent.getParcelableExtra<Bitmap>("BitmapImage")
-        imageView.setImageBitmap(selectedImage)
+        val selectedImageURI = intent.getStringExtra("ImageUri")!!.toUri()
+        val source = ImageDecoder.createSource(this.contentResolver, selectedImageURI)
+        val bmpImage = ImageDecoder.decodeBitmap(source).copy(Bitmap.Config.RGBA_F16, true)
+
+        imageView.setImageBitmap(bmpImage)
     }
 
     private fun createUnsharpPicture(originalBitmap: Bitmap, bluredBitmap: Bitmap, amountValue: Double, thresholdValue: Int): Bitmap {
