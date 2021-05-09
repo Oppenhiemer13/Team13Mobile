@@ -126,10 +126,10 @@ class UnsharpMaskActivity: AppCompatActivity() {
         var newPicture = Bitmap.createBitmap(pictureWidth, pictureHeight, bitmap1.config)
 
         val amountValue: SeekBar = findViewById(R.id.amountSeekBar);
-        var currentNumberAmount: Double = amountValue.progress * 0.009
+        var currentNumberAmount: Double = amountValue.progress * 0.005
 
         val radiusValue: SeekBar = findViewById(R.id.radiusSeekBar);
-        val sigma: Double = radiusValue.progress / 15.0
+        val sigma: Double = radiusValue.progress / 20.0
         val currentNumberRadius: Int = (3 * sigma).toInt()
 
         val thresholdValue: SeekBar = findViewById(R.id.thresholdSeekBar);

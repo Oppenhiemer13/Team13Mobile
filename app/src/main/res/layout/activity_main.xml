@@ -124,7 +124,7 @@
                 android:textSize="12sp" />
 
             <Button
-                android:id="@+id/unsharpMaksBtn"
+                android:id="@+id/unsharpMaskBtn"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_marginHorizontal="10dp"
