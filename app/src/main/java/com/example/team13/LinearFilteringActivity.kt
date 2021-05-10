@@ -34,4 +34,35 @@ class LinearFilteringActivity: AppCompatActivity() {
 
         imageView.setImageBitmap(bmpImage)
     }
+
+    private fun getDeterminantSize3(matrix: Array<Array<Double>>): Double {
+        val sum1 = matrix[0][0] * matrix[1][1] * matrix[2][2]
+        val sum2 = matrix[1][0] * matrix[0][2] * matrix[2][1]
+        val sum3 = matrix[0][1] * matrix[2][1] * matrix[2][0]
+        val sum4 = -1 * matrix[0][2] * matrix[1][1] * matrix[2][0]
+        val sum5 = -1 * matrix[0][1] * matrix[1][0] * matrix[2][2]
+        val sum6 = -1 * matrix[0][0] * matrix[1][2] * matrix[2][1]
+
+        return sum1 + sum2 + sum3 + sum4 + sum5 + sum6
+    }
+
+    private fun getDeterminantSize2(matrix: Array<Array<Double>>): Double {
+        val sum1 = matrix[0][0] * matrix[1][1]
+        val sum2 = -1 * matrix[1][0] * matrix[0][1]
+
+        return sum1 + sum2
+    }
+
+    private fun getReverseOfMatrix(matrix: Array<Array<Double>>): Array<Array<Double>> {
+
+        var reverseMatrix: Array<Array<Double>> = Array(3, { Array(3, {0.0}) })
+
+        for (i in 0..2) {
+            for (j in 0..2) {
+                //вычисляем миноры
+            }
+        }
+
+        return reverseMatrix
+    }
 }
