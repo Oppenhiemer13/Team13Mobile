@@ -16,6 +16,9 @@
     <string name="Start">Start</string>
     <string name="Finish">Finish</string>
     <string name="Bilinear">Bilinear</string>
+    <string name="t">Trilinear</string>
+    <string name="trilinear">Trilinear</string>
+    <string name="LinearFilter">LinearFilter</string>
 </resources>
 
 

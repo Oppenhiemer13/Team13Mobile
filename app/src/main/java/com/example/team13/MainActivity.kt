@@ -96,6 +96,10 @@ class MainActivity : AppCompatActivity() {
         faceDetBtn.setOnClickListener{
             imageView.setImageBitmap(faceDetect())
         }
+
+        linearFilterBtn.setOnClickListener{
+            startNewIntent(this, LinearFilteringActivity::class.java)
+        }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
