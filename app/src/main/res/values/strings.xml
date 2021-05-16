@@ -19,6 +19,7 @@
     <string name="t">Trilinear</string>
     <string name="trilinear">Trilinear</string>
     <string name="LinearFilter">LinearFilter</string>
+    <string name="affine">affine</string>
 </resources>
 
 

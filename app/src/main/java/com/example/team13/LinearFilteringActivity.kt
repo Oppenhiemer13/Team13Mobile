@@ -32,6 +32,14 @@ class LinearFilteringActivity: AppCompatActivity() {
             bilinearFiltering()
         }
 
+        affineBtn.setOnClickListener{
+            affineFiltering()
+        }
+
+        trilinearBtn.setOnClickListener{
+            trilinearFiltering()
+        }
+
     }
 
     private var pointsCoordinates: Array<Array<Double>> = Array(2, { Array(6, { 0.0 }) })
@@ -158,7 +166,6 @@ class LinearFilteringActivity: AppCompatActivity() {
     private fun getAffineTransformationMatrix(coordinates: Array<Array<Double>>): Array<Array<Double>> {
 
         var affineTransformationMatrix: Array<Array<Double>> = Array(3, { Array(3, { 0.0 }) })
-
         affineTransformationMatrix[2][0] = 0.0
         affineTransformationMatrix[2][1] = 0.0
         affineTransformationMatrix[2][2] = 1.0
@@ -187,8 +194,6 @@ class LinearFilteringActivity: AppCompatActivity() {
             getReverseOfMatrix(matrixFirstComponents),
             matrixSecondComponentsY
         )
-        //println("OK2.1 " + matrixComponentsX[0] + " " + matrixComponentsX[1] + " " + matrixComponentsX[2])
-        //println("OK2.2 " + matrixComponentsY[0] + " " + matrixComponentsY[1] + " " + matrixComponentsY[2])
 
         for (i in 0..2) {
             affineTransformationMatrix[0][i] = matrixComponentsX[i]
@@ -259,18 +264,18 @@ class LinearFilteringActivity: AppCompatActivity() {
     private fun getImageWithDecrease(widthBitmap: Int, heightBitmap: Int, originalBitmap: Bitmap): Bitmap {
         var x = widthBitmap
         var y = heightBitmap
-        if (widthBitmap % 2 == 1) x = widthBitmap - 1
-        if (heightBitmap % 2 == 1) y = heightBitmap - 1
+        if (widthBitmap % 2 == 1 && widthBitmap > 1) x = widthBitmap - 1
+        if (heightBitmap % 2 == 1 && heightBitmap > 1) y = heightBitmap - 1
         val newBitmap = Bitmap.createBitmap(x / 2, y / 2, Bitmap.Config.ARGB_8888)
 
-        for (i in 0 until x) {
-            for (j in 0 until y) {
+        for (i in 0 until x / 2) {
+            for (j in 0 until y / 2) {
 
                 var colors = arrayOf(0, 0, 0, 0)
 
                 for (k in 0..1) {
                     for (l in 0..1) {
-                        var pixel = originalBitmap.getPixel(x + k, y + l)
+                        var pixel = originalBitmap.getPixel(i * 2 + k, j * 2 + l)
                         val currentColors = arrayOf(Color.alpha(pixel), Color.red(pixel), Color.green(pixel), Color.blue(pixel))
 
                         for (q in 0..3) {
@@ -278,41 +283,38 @@ class LinearFilteringActivity: AppCompatActivity() {
                         }
                     }
                 }
-
                 val newPixel = Color.argb(colors[0] / 4, colors[1] / 4, colors[2] / 4, colors[3] / 4)
                 newBitmap.setPixel(i, j, newPixel)
-
-                y = y + 1
             }
-            x = x + 1
         }
 
         return newBitmap
     }
 
-    private fun getMipMapping(): Array<Bitmap> {
+    private fun getMipMapping(bitmapStart: Bitmap): Array<Bitmap> {
 
-        val imageViewStart: ImageView = findViewById(R.id.imageView)
-        val bitmapStart = (imageViewStart.getDrawable() as BitmapDrawable).bitmap
         var imageSizes: Array<Bitmap> = Array(1, { bitmapStart })
 
         var sizeWidth = bitmapStart.getWidth()
         var sizeHeight = bitmapStart.getHeight()
 
         var i = 0
-        while (min(sizeWidth, sizeHeight) > 0) {
+        while (min(sizeWidth / 2, sizeHeight / 2) > 0) {
             imageSizes += getImageWithDecrease(sizeWidth, sizeHeight, imageSizes[i])
+            sizeWidth = sizeWidth / 2
+            sizeHeight = sizeHeight / 2
             i = i + 1
         }
 
         return imageSizes
     }
 
-    private fun getKDecrease(affineTransformation: Array<Array<Double>>,
-                                     reverseAffineTransformation: Array<Array<Double>>,
-                                     x: Int,
-                                     y: Int,
-                                     currentBitmap: Bitmap): Int {
+    private fun getKDecrease(
+        affineTransformation: Array<Array<Double>>,
+        reverseAffineTransformation: Array<Array<Double>>,
+        x: Int,
+        y: Int,
+        currentBitmap: Bitmap): Int {
 
         val pictureWidth: Int = currentBitmap.getWidth()
         val pictureHeight: Int = currentBitmap.getHeight()
@@ -398,6 +400,28 @@ class LinearFilteringActivity: AppCompatActivity() {
         imageView.setImageBitmap(newPicture)
     }
 
+    private fun affineFiltering() {
+        pointsCoordinates[0] = arrayOf(1.0, 500.0, 1070.0, 1.0, 500.0, 1070.0)
+        pointsCoordinates[1] = arrayOf(1.0, 600.0, 1.0, 600.0, 1.0, 600.0)
+
+        val affineTransformation = getAffineTransformationMatrix(pointsCoordinates)
+
+        val imageViewStart: ImageView = findViewById(R.id.imageView)
+        val bitmapStart = (imageViewStart.getDrawable() as BitmapDrawable).bitmap
+        val pictureWidth: Int = bitmapStart.getWidth()
+        val pictureHeight: Int = bitmapStart.getHeight()
+        var newPicture = Bitmap.createBitmap(pictureWidth, pictureHeight, bitmapStart.config)
+
+        for (i in 0 until pictureWidth) {
+            for (j in 0 until pictureHeight) {
+                val newPixel = getNewPixel(affineTransformation, i, j, bitmapStart)
+                newPicture.setPixel(i, j, newPixel)
+            }
+        }
+
+        imageView.setImageBitmap(newPicture)
+    }
+
     private fun getTrilinearInterpolation(firstPixel: Int, secondPixel: Int, k: Int, m: Int): Int {
 
         val newPixelAlpha = (Color.alpha(firstPixel) * (2 * m - k) + Color.alpha(secondPixel) * (k - m)) / m
@@ -410,11 +434,44 @@ class LinearFilteringActivity: AppCompatActivity() {
         return newPixel
     }
 
-    private fun getTwoLayersPixels(imageSizes: Array<Bitmap>, decrease: Int, x: Int, y: Int, pixels: Array<Bitmap>): Array<Int> {
-        var twoPixels: Array<Int> = arrayOf(0, 0)
+    private fun getNewTrilinearPixel(x: Int,
+                                     y: Int,
+                                     affineTransformation: Array<Array<Double>>,
+                                     pictureWidth: Int,
+                                     pictureHeight: Int): Array<Int> {
+        var coordinates: Array<Int> = arrayOf(0, 0)
 
+        var x1 = (affineTransformation[0][0] + x * affineTransformation[0][1] + y * affineTransformation[0][2]).roundToInt()
+        var y1 = (affineTransformation[1][0] + x * affineTransformation[1][1] + y * affineTransformation[1][2]).roundToInt()
+
+        x1 = normalizeValue(0, pictureWidth - 1, x1)
+        y1 = normalizeValue(0, pictureHeight - 1, y1)
+
+        coordinates[0] = x1
+        coordinates[1] = y1
+
+        return coordinates
+    }
+
+    private fun normalizeValue(min: Int, max: Int, value: Int): Int {
+
+        var newValue = value
+
+        if (value > max) {
+            newValue = max
+        }
+        else {
+            if (value < min) {
+                newValue = min
+            }
+        }
+
+        return newValue
+    }
+
+    private fun getTwoLayersPixels(decrease: Int, x: Int, y: Int, pixels: Array<Bitmap>): Array<Int> {
+        var twoPixels: Array<Int> = arrayOf(0, 0, 0)
         val difference = 0.0000000001
-
         var degree = 1
         var valueOfdegree = 0
 
@@ -423,27 +480,61 @@ class LinearFilteringActivity: AppCompatActivity() {
             valueOfdegree = valueOfdegree + 1
         }
 
-        var degree2 = degree / 2
+        var degree2 = 1
+        if (valueOfdegree == 0) {
+            valueOfdegree += 1
+            degree2 = degree
+            degree = degree * 2
+        }
+        else {
+            degree2 = degree / 2
+        }
 
-        var firstLayerX = (Math.ceil(1.0 * x / degree) + difference).toInt()
-        var firstLayerY = (Math.ceil(1.0 * y / degree) + difference).toInt()
-        var secondLayerX = (Math.ceil(1.0 * x / degree2) + difference).toInt()
-        var secondLayerY = (Math.ceil(1.0 * y / degree2) + difference).toInt()
+        var firstLayerX = normalizeValue( 0, pixels[valueOfdegree].getWidth() - 1, x / degree) //(Math.ceil(1.0 * x / degree)).toInt()
+        var firstLayerY = normalizeValue( 0, pixels[valueOfdegree].getHeight() - 1, y / degree) //(Math.ceil(1.0 * y / degree)).toInt()
+        var secondLayerX = normalizeValue( 0, pixels[valueOfdegree - 1].getWidth() - 1, x / degree2) //(Math.ceil(1.0 * x / degree2)).toInt()
+        var secondLayerY = normalizeValue( 0, pixels[valueOfdegree - 1].getHeight() - 1, y / degree2) //(Math.ceil(1.0 * y / degree2)).toInt()
 
         twoPixels[0] = pixels[valueOfdegree].getPixel(firstLayerX, firstLayerY)
         twoPixels[1] = pixels[valueOfdegree - 1].getPixel(secondLayerX, secondLayerY)
+        twoPixels[2] = degree2
 
         return twoPixels
     }
 
+    private fun printAllPictures(pictures: Array<Bitmap>) {
+        val imageViewStart: ImageView = findViewById(R.id.imageView)
+        val bitmapStart = (imageViewStart.getDrawable() as BitmapDrawable).bitmap
+        val pictureWidth: Int = bitmapStart.getWidth()
+        val pictureHeight: Int = bitmapStart.getHeight()
+        var newPicture = Bitmap.createBitmap(pictureWidth, pictureHeight, bitmapStart.config)
+
+        var sumWidths = 0
+        val numPictures = pictures.size
+
+        for (i in 1 until numPictures) {
+            val currentWidth: Int = pictures[i].getWidth()
+            val currentHeight: Int = pictures[i].getHeight()
+
+            for (j in 0 until currentWidth) {
+                for (k in 0 until currentHeight) {
+                    val currentPixel = pictures[i].getPixel(j, k)
+                    newPicture.setPixel(sumWidths + j, k, currentPixel)
+                }
+            }
+            sumWidths += (currentWidth - 1)
+        }
+        imageView.setImageBitmap(newPicture)
+    }
+
     private fun trilinearFiltering() {
 
-        pointsCoordinates[0] = arrayOf(1.0, 500.0, 1070.0, 50.0, 500.0, 1000.0)
-        pointsCoordinates[1] = arrayOf(1.0, 600.0, 1.0, 50.0, 400.0, 50.0)
-        reversePointsCoordinates[0] = arrayOf(50.0, 500.0, 1000.0, 1.0, 500.0, 1070.0)
-        reversePointsCoordinates[1] = arrayOf(50.0, 400.0, 50.0, 1.0, 600.0, 1.0)
+        pointsCoordinates[0] = arrayOf(1.0, 500.0, 1070.0, 50.0, 500.0, 800.0)
+        pointsCoordinates[1] = arrayOf(1.0, 600.0, 1.0, 50.0, 300.0, 50.0)
+        reversePointsCoordinates[0] = arrayOf(50.0, 500.0, 800.0, 1.0, 500.0, 1070.0)
+        reversePointsCoordinates[1] = arrayOf(50.0, 300.0, 50.0, 1.0, 600.0, 1.0)
 
-        val affineTransformation = getAffineTransformationMatrix(pointsCoordinates)
+        val affineTransformation = getAffineTransformationMatrix(reversePointsCoordinates)
         val reverseAffineTransformation = getAffineTransformationMatrix(reversePointsCoordinates)
 
         val imageViewStart: ImageView = findViewById(R.id.imageView)
@@ -452,7 +543,22 @@ class LinearFilteringActivity: AppCompatActivity() {
         val pictureHeight: Int = bitmapStart.getHeight()
         var newPicture = Bitmap.createBitmap(pictureWidth, pictureHeight, bitmapStart.config)
 
-        
+        val imageSizes = getMipMapping(bitmapStart)
+
+        //printAllPictures(imageSizes)
+
+        for (i in 0 until pictureWidth) {
+            for (j in 0 until pictureHeight) {
+                val coordinates = getNewTrilinearPixel(i, j, affineTransformation, pictureWidth, pictureHeight)
+                var x = coordinates[0]
+                val y = coordinates[1]
+                var decrease = getKDecrease(affineTransformation, reverseAffineTransformation, i, j, bitmapStart)
+                //println("decrease: " + decrease)
+                var pixels = getTwoLayersPixels(decrease, x, y, imageSizes)
+                var newPixel = getTrilinearInterpolation(pixels[0], pixels[1], decrease, pixels[2] + 1)
+                newPicture.setPixel(i, j, newPixel)
+            }
+        }
 
         imageView.setImageBitmap(newPicture)
     }
