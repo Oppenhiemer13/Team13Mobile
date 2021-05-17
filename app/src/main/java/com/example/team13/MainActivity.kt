@@ -85,6 +85,10 @@ class MainActivity : AppCompatActivity() {
             startNewIntent(this, ScaleActivity::class.java)
         }
 
+        rotateBtn.setOnClickListener{
+            startNewIntent(this, RotateActivity::class.java)
+        }
+
         filtersBtn.setOnClickListener{
             startNewIntent(this, FiltersActivity::class.java)
         }

@@ -106,7 +106,21 @@
                 android:drawableTop="@drawable/ic_baseline_photo_size_select_large_24"
                 android:fontFamily="@font/source_sans_pro_light"
                 android:includeFontPadding="false"
-                android:text="@string/ScaleAndRotate"
+                android:text="@string/Scale"
+                android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/rotateBtn"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="10dp"
+                android:layout_weight="1"
+                android:background="#00FFFFFF"
+                android:backgroundTint="#00FFFFFF"
+                android:drawableTop="@drawable/ic_round_photo_filter_24"
+                android:fontFamily="@font/source_sans_pro_light"
+                android:includeFontPadding="false"
+                android:text="@string/rotateString"
                 android:textSize="12sp" />
 
             <Button
