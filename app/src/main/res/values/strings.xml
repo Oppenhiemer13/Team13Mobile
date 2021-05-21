@@ -1,30 +1,35 @@
 <resources>
     <string name="app_name">Team13</string>
     <string name="resize_button">Resize Button</string>
-    <string name="scale">scale</string>
     <string name="load_image_button">Load Image Button</string>
     <string name="action_button">action_button</string>
     <string name="imgView">imgView</string>
     <string name="filters">Filters</string>
-    <string name="Scale">Scale</string>
-    <string name="GreenFilter">Green Filter</string>
+    <string name="scale">Scale</string>
+    <string name="greenFilter">Green Filter</string>
     <string name="Blur">Blur</string>
     <string name="Median">Median</string>
-    <string name="Contrast">Contrast</string>
-    <string name="Sharpness">Sharpness</string>
-    <string name="UnsharpMask">UnsharpMask</string>
-    <string name="Start">Start</string>
-    <string name="Finish">Finish</string>
-    <string name="Bilinear">Bilinear</string>
-    <string name="t">Trilinear</string>
+    <string name="contrast">Contrast</string>
+    <string name="sharpness">Sharpness</string>
+    <string name="unsharpMask">UnsharpMask</string>
+    <string name="start">Start</string>
+    <string name="finish">Finish</string>
+    <string name="bilinear">Bilinear</string>
     <string name="trilinear">Trilinear</string>
-    <string name="LinearFilter">LinearFilter</string>
+    <string name="linearFilter">LinearFilter</string>
     <string name="affine">affine</string>
     <string name="rotateString">Rotate</string>
     <string name="degreesString">Degrees</string>
     <string name="rotateString90">90</string>
     <string name="rotateString180">180</string>
     <string name="rotateString270">270</string>
+    <string name="save">Save</string>
+    <string name="faceDectection">Face Detection</string>
+    <string name="cameraButton">Camera Button</string>
+    <string name="threshold">Threshold</string>
+    <string name="radius">Radius</string>
+    <string name="amount">Amount</string>
+    <string name="seekBar">SeekBar</string>
 </resources>
 
 

@@ -292,6 +292,8 @@ class MainActivity : AppCompatActivity() {
         scaleBtn.isEnabled = false
         filtersBtn.isEnabled = false
         unsharpMaskBtn.isEnabled = false
+        rotateBtn.isEnabled = false
+        linearFilterBtn.isEnabled = false
     }
 
     private fun enableButtons() {
@@ -300,6 +302,8 @@ class MainActivity : AppCompatActivity() {
         scaleBtn.isEnabled = true
         filtersBtn.isEnabled = true
         unsharpMaskBtn.isEnabled = true
+        rotateBtn.isEnabled = true
+        linearFilterBtn.isEnabled = true
     }
 }
 

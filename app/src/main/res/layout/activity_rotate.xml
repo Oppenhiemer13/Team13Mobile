@@ -8,12 +8,25 @@
     tools:context=".ScaleActivity">
 
 
+    <Button
+        android:id="@+id/rotateButton270"
+        android:layout_width="60dp"
+        android:layout_height="38dp"
+        android:layout_marginTop="16dp"
+        android:background="#77CF6F"
+        android:text="@string/rotateString270"
+        android:textColor="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/rotateButton180"
+        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginBottom="150dp"
         android:background="#383542"
+        android:contentDescription="@string/imgView"
         android:scaleType="centerInside"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -25,41 +38,27 @@
 
     <Button
         android:id="@+id/rotateButton180"
-        android:layout_width="95dp"
+        android:layout_width="60dp"
         android:layout_height="38dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginTop="16dp"
         android:background="@color/teal_200"
         android:text="@string/rotateString180"
         android:textColor="@color/black"
-        app:layout_constraintBottom_toTopOf="@+id/degreesString"
-        app:layout_constraintEnd_toStartOf="@+id/rotateButton270"
-        app:layout_constraintStart_toEndOf="@+id/rotateButton90"
-        app:layout_constraintTop_toBottomOf="@+id/imageView"
-        app:layout_constraintVertical_bias="1.0" />
-
-    <Button
-        android:id="@+id/rotateButton270"
-        android:layout_width="95dp"
-        android:layout_height="38dp"
-        android:layout_marginBottom="16dp"
-        android:background="@color/teal_200"
-        android:text="@string/rotateString270"
-        android:textColor="@color/black"
-        app:layout_constraintBottom_toTopOf="@+id/degreesString"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/rotateButton180" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
     <Button
         android:id="@+id/rotateButton90"
-        android:layout_width="95dp"
+        android:layout_width="60dp"
         android:layout_height="38dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginTop="16dp"
         android:background="@color/teal_200"
         android:text="@string/rotateString90"
         android:textColor="@color/black"
-        app:layout_constraintBottom_toTopOf="@+id/degreesString"
         app:layout_constraintEnd_toStartOf="@+id/rotateButton180"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
 
     <TextView
@@ -71,27 +70,25 @@
         android:text="@string/degreesString"
         app:layout_constraintBottom_toTopOf="@+id/seekBar"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView"
-        app:layout_constraintVertical_bias="0.821" />
+        app:layout_constraintVertical_bias="0.69" />
 
     <SeekBar
         android:id="@+id/seekBar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="18dp"
         android:layout_marginStart="30dp"
         android:layout_marginEnd="30dp"
         android:layout_marginBottom="28dp"
+        android:contentDescription="@string/seekBar"
         android:max="360"
         android:min="0"
         android:theme="@style/SeekBarColor"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/actionBtn" />
-
+        app:layout_constraintStart_toStartOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

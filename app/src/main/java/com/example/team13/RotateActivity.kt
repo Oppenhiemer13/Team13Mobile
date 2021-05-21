@@ -10,6 +10,7 @@ import android.widget.SeekBar
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.net.toUri
 import kotlinx.android.synthetic.main.activity_rotate.*
+import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -35,6 +36,7 @@ class RotateActivity : AppCompatActivity() {
             imageView.setImageBitmap(rotate270(bitmap))
         }
 
+       val bitmap = imageView.drawable.toBitmap()
         seekBar.setOnSeekBarChangeListener(
             object : SeekBar.OnSeekBarChangeListener {
                 @SuppressLint("SetTextI18n")
@@ -44,8 +46,13 @@ class RotateActivity : AppCompatActivity() {
                     fromUser: Boolean
                 ) {
                     degreesString.text = "Degrees: $progress"
-                    val bitmap = getImage()
-                    var pr = progress.toFloat()
+                }
+
+                override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                }
+
+                override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                    var pr = seekBar!!.progress.toFloat()
                     when {
                         pr > 270 -> {
                             pr -= 270
@@ -60,15 +67,9 @@ class RotateActivity : AppCompatActivity() {
                             imageView.setImageBitmap(bitmapRotate(pr, rotate90(bitmap)))
                         }
                         else -> {
-                            imageView.setImageBitmap(bitmapRotate(progress.toFloat(), bitmap))
+                            imageView.setImageBitmap(bitmapRotate(seekBar.progress.toFloat(), bitmap))
                         }
                     }
-                }
-
-                override fun onStartTrackingTouch(seekBar: SeekBar?) {
-                }
-
-                override fun onStopTrackingTouch(seekBar: SeekBar?) {
                 }
             }
         )
@@ -124,7 +125,7 @@ class RotateActivity : AppCompatActivity() {
     }
 
     private fun bitmapRotate(degrees: Float, bitmap: Bitmap): Bitmap? {
-        val angle = (3.14 * degrees) / 180
+        val angle = (PI * degrees) / 180
         val pictureWidth: Int = bitmap.width
         val pictureHeight: Int = bitmap.height
 

@@ -36,6 +36,7 @@
         android:layout_height="0dp"
         android:layout_marginBottom="150dp"
         android:background="#383542"
+        android:contentDescription="@string/imgView"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -76,7 +77,7 @@
                 android:drawableTop="@drawable/ic_baseline_palette_24"
                 android:fontFamily="@font/source_sans_pro_light"
                 android:includeFontPadding="false"
-                android:text="@string/GreenFilter"
+                android:text="@string/greenFilter"
                 android:textSize="12sp" />
 
             <Button
@@ -101,7 +102,7 @@
                 android:layout_weight="1"
                 android:background="#00FFFFFF"
                 android:backgroundTint="#00FFFFFF"
-                android:drawableTop="@drawable/ic_baseline_cancel_24"
+                android:drawableTop="@drawable/ic_baseline_filter_b_and_w_24"
                 android:fontFamily="@font/source_sans_pro_light"
                 android:includeFontPadding="false"
                 android:text="@string/Median"
@@ -118,7 +119,7 @@
                 android:drawableTop="@drawable/ic_round_tonality_24"
                 android:fontFamily="@font/source_sans_pro_light"
                 android:includeFontPadding="false"
-                android:text="@string/Contrast"
+                android:text="@string/contrast"
                 android:textSize="12sp" />
 
             <Button
@@ -132,7 +133,7 @@
                 android:drawableTop="@drawable/ic_round_details_24"
                 android:fontFamily="@font/source_sans_pro_light"
                 android:includeFontPadding="false"
-                android:text="@string/Sharpness"
+                android:text="@string/sharpness"
                 android:textSize="12sp" />
 
         </LinearLayout>

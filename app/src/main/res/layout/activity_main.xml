@@ -5,6 +5,7 @@
     android:id="@+id/c12"
     style="@style/Team13Style"
     android:background="#2D2B33"
+    android:contentDescription="@string/cameraButton"
     tools:context=".MainActivity">
 
     <ImageButton
@@ -29,6 +30,7 @@
         android:layout_height="0dp"
         android:layout_marginBottom="150dp"
         android:background="#383542"
+        android:contentDescription="@string/imgView"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -44,6 +46,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:background="#00FFFFFF"
+        android:contentDescription="@string/cameraButton"
         android:tint="@color/sel_btn"
         app:layout_constraintStart_toEndOf="@+id/actionBtn"
         app:layout_constraintTop_toBottomOf="@+id/imageView"
@@ -56,7 +59,7 @@
         android:background="@drawable/ic_baseline_radio_button_checked_24"
         android:backgroundTint="@color/sel_btn"
         android:fontFamily="@font/source_sans_pro"
-        android:text="Save"
+        android:text="@string/save"
         android:textColor="#2D2B33"
         android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -70,6 +73,7 @@
         android:layout_marginStart="32dp"
         android:layout_marginTop="16dp"
         android:background="#00FFFFFF"
+        android:contentDescription="@string/faceDectection"
         android:tint="@color/sel_btn"
         app:layout_constraintStart_toEndOf="@+id/cameraBtn"
         app:layout_constraintTop_toBottomOf="@+id/imageView"
@@ -108,7 +112,7 @@
                 android:drawableTop="@drawable/ic_baseline_photo_size_select_large_24"
                 android:fontFamily="@font/source_sans_pro_light"
                 android:includeFontPadding="false"
-                android:text="@string/Scale"
+                android:text="@string/scale"
                 android:textSize="12sp" />
 
             <Button
@@ -150,7 +154,7 @@
                 android:drawableTop="@drawable/ic_round_details_24"
                 android:fontFamily="@font/source_sans_pro_light"
                 android:includeFontPadding="false"
-                android:text="@string/UnsharpMask"
+                android:text="@string/unsharpMask"
                 android:textSize="12sp" />
 
             <Button
@@ -164,7 +168,7 @@
                 android:drawableTop="@drawable/ic_round_grid_on_24"
                 android:fontFamily="@font/source_sans_pro_light"
                 android:includeFontPadding="false"
-                android:text="@string/LinearFilter"
+                android:text="@string/linearFilter"
                 android:textSize="12sp" />
 
         </LinearLayout>

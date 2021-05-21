@@ -28,6 +28,7 @@
         android:layout_height="0dp"
         android:layout_marginBottom="200dp"
         android:background="#383542"
+        android:contentDescription="@string/imgView"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -64,32 +65,32 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/AmountText"
         android:layout_width="100dp"
         android:layout_height="20dp"
         android:layout_marginStart="56dp"
         android:layout_marginBottom="20dp"
-        android:text="Amount"
-        app:layout_constraintBottom_toTopOf="@+id/textView2"
+        android:text="@string/amount"
+        app:layout_constraintBottom_toTopOf="@+id/RadiusText"
         app:layout_constraintStart_toEndOf="@+id/amountSeekBar" />
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/RadiusText"
         android:layout_width="100dp"
         android:layout_height="20dp"
         android:layout_marginStart="56dp"
         android:layout_marginBottom="20dp"
-        android:text="Radius"
-        app:layout_constraintBottom_toTopOf="@+id/textView3"
+        android:text="@string/radius"
+        app:layout_constraintBottom_toTopOf="@+id/ThresholdText"
         app:layout_constraintStart_toEndOf="@+id/radiusSeekBar" />
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/ThresholdText"
         android:layout_width="100dp"
         android:layout_height="20dp"
         android:layout_marginStart="56dp"
         android:layout_marginBottom="16dp"
-        android:text="Threshold"
+        android:text="@string/threshold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/thresholdSeekBar" />
 
