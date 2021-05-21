@@ -106,7 +106,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
         if (requestCode == 111 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -230,12 +234,18 @@ class MainActivity : AppCompatActivity() {
 
 
         for (rect in faceDetections.toArray()) {
-            Imgproc.rectangle(main, Point(rect.x.toDouble(),
-                rect.y.toDouble()),
-                Point((rect.x + rect.width).toDouble(),
-                    (rect.y + rect.height).toDouble()),
+            Imgproc.rectangle(
+                main, Point(
+                    rect.x.toDouble(),
+                    rect.y.toDouble()
+                ),
+                Point(
+                    (rect.x + rect.width).toDouble(),
+                    (rect.y + rect.height).toDouble()
+                ),
                 Scalar(0.0, 255.0, 0.0),
-                2)
+                2
+            )
         }
 
         Utils.matToBitmap(main, bitmap)
@@ -252,7 +262,7 @@ class MainActivity : AppCompatActivity() {
         contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
         val imageUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
         fos = resolver.openOutputStream(Objects.requireNonNull(imageUri)!!)!!
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100,fos)
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos)
         Objects.requireNonNull<OutputStream?>(fos)
         Toast.makeText(this, "Image saved", Toast.LENGTH_SHORT).show()
     }

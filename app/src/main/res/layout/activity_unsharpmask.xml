@@ -22,21 +22,6 @@
         app:layout_constraintTop_toBottomOf="@+id/imageView"
         app:layout_constraintVertical_bias="0.01" />
 
-    <ImageButton
-        android:id="@+id/startUnsharpMaskingBtn"
-        android:layout_width="200dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:background="#00FFFFFF"
-        android:contentDescription="@string/load_image_button"
-        android:longClickable="false"
-        android:scaleType="center"
-        android:src="@drawable/ic_baseline_cancel_24"
-        android:visibility="visible"
-        app:layout_constraintEnd_toStartOf="@+id/actionBtn"
-        app:layout_constraintTop_toBottomOf="@+id/imageView" />
-
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="0dp"

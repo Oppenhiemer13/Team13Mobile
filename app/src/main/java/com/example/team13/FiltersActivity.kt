@@ -4,15 +4,12 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.ImageDecoder
 import android.graphics.drawable.BitmapDrawable
-import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageView
 import android.widget.SeekBar
 import androidx.core.net.toUri
 import kotlinx.android.synthetic.main.activity_filters.*
-import kotlinx.android.synthetic.main.activity_main.imageView
-import kotlinx.android.synthetic.main.scale_activity.*
 import kotlin.math.PI
 import kotlin.math.pow
 import kotlin.math.roundToInt

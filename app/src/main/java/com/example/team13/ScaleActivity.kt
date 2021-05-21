@@ -3,15 +3,15 @@ package com.example.team13
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.ImageDecoder
-import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.net.toUri
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.scale_activity.*
 import kotlinx.android.synthetic.main.scale_activity.actionBtn
 import kotlinx.android.synthetic.main.scale_activity.imageView
+import kotlin.math.ceil
+import kotlin.math.floor
 
 class ScaleActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,36 +46,40 @@ class ScaleActivity : AppCompatActivity() {
 
         val newBmp = Bitmap.createBitmap(neww, newh, Bitmap.Config.RGBA_F16)
 
+
+        val xRatio : Float = (oldw - 1).toFloat() / (neww - 1)
+        val yRatio : Float = (oldh - 1).toFloat() / (newh - 1)
+
         for(x in 0 until neww){
             for(y in 0 until newh){
 
-                val gx = x.toFloat() / neww * (oldw - 1)
-                val gy = y.toFloat() / newh * (oldh - 1)
+                val xTop = floor(xRatio * x).toInt()
+                val yLeft = floor(yRatio * y).toInt()
 
-                val gxi = gx.toInt()
-                val gyi = gy.toInt()
+                val xBot = ceil(xRatio * x).toInt()
+                val yRight = ceil(yRatio * y).toInt()
 
-                val c00  = bmpImage.getColor(gxi, gyi)
-                val c10 = bmpImage.getColor(gxi + 1,gyi)
-                val c01 = bmpImage.getColor(gxi,gyi + 1)
-                val c11 = bmpImage.getColor(gxi + 1,gyi + 1)
+                val xDelta = (xRatio * x) - xTop
+                val yDelta = (yRatio * y) - yLeft
 
-                val red = Blerp(c00.red(), c10.red(), c01.red(), c11.red(), gx - gxi, gy- gyi)
-                val green = Blerp(c00.green(), c10.green(), c01.green(), c11.green(), gx - gxi, gy- gyi)
-                val blue = Blerp(c00.blue(), c10.blue(), c01.blue(), c11.blue(), gx - gxi, gy- gyi)
+                val f00 = bmpImage.getColor(xTop, yLeft)
+                val f10 = bmpImage.getColor(xBot, yLeft)
+                val f01 = bmpImage.getColor(xTop, yRight)
+                val f11 = bmpImage.getColor(xBot, yRight)
 
-                newBmp.setPixel(x,y, Color.rgb(red,green,blue))
+                val newPixelRed = f00.red() * (1 - xDelta) * (1 - yDelta) + f10.red() * xDelta * (1 -yDelta) +
+                        f01.red() * yDelta * (1 - xDelta) + f11.red() * xDelta * yDelta
+
+                val newPixelGreen = f00.green() * (1 - xDelta) * (1 - yDelta) + f10.green() * xDelta * (1 -yDelta) +
+                        f01.green() * yDelta * (1 - xDelta) + f11.green() * xDelta * yDelta
+
+                val newPixelBlue = f00.blue() * (1 - xDelta) * (1 - yDelta) + f10.blue() * xDelta * (1 -yDelta) +
+                        f01.blue() * yDelta * (1 - xDelta) + f11.blue() * xDelta * yDelta
+
+                newBmp.setPixel(x,y, Color.rgb(newPixelRed,newPixelGreen, newPixelBlue))
             }
         }
 
         imageView.setImageBitmap(newBmp)
-    }
-
-    private fun Lerp (s : Float, e : Float, t : Float): Float {
-        return s + (e - s) * t
-    }
-
-    private fun Blerp (c00 : Float, c10 : Float, c01 : Float, c11 : Float, tx : Float, ty : Float): Float {
-        return Lerp(Lerp(c00,c10,tx), Lerp(c01,c11,tx),ty)
     }
 }
