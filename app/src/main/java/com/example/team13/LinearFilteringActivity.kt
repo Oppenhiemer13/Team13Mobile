@@ -391,9 +391,8 @@ class LinearFilteringActivity: AppCompatActivity(){
     }
 
     private fun bilinearFiltering() {
-        getImage()
-
-        val affineTransformation = getAffineTransformationMatrix(pointsCoordinates)
+        reversePointsCoordinates = reverseCoordinates(pointsCoordinates)
+        val affineTransformation = getAffineTransformationMatrix(reversePointsCoordinates)
 
         val imageViewStart: ImageView = findViewById(R.id.imageView)
         val bitmapStart = (imageViewStart.getDrawable() as BitmapDrawable).bitmap
@@ -409,6 +408,7 @@ class LinearFilteringActivity: AppCompatActivity(){
         }
 
         imageView.setImageBitmap(newPicture)
+        stepNum = 0
     }
 
     private fun affineFiltering() {
@@ -429,6 +429,7 @@ class LinearFilteringActivity: AppCompatActivity(){
         }
 
         imageView.setImageBitmap(newPicture)
+        stepNum = 0
     }
 
     private fun getTrilinearInterpolation(firstPixel: Int, secondPixel: Int, k: Int, m: Int): Int {
@@ -572,6 +573,7 @@ class LinearFilteringActivity: AppCompatActivity(){
             }
         }
         imageView.setImageBitmap(newPicture)
+        stepNum = 0
     }
 
     fun touchUp(): Boolean {
@@ -620,17 +622,17 @@ class LinearFilteringActivity: AppCompatActivity(){
             pointsCoordinates[0][stepNum] = x
             pointsCoordinates[1][stepNum] = y
 
+            val paintRed = Paint()
+            paintRed.setColor(Color.RED)
+            paintRed.setStyle(Paint.Style.FILL)
+
             val paintGreen = Paint()
-            paintGreen.setColor(Color.RED)
+            paintGreen.setColor(Color.GREEN)
             paintGreen.setStyle(Paint.Style.FILL)
 
             val paintBlue = Paint()
-            paintBlue.setColor(Color.GREEN)
+            paintBlue.setColor(Color.BLUE)
             paintBlue.setStyle(Paint.Style.FILL)
-
-            val paintRed = Paint()
-            paintRed.setColor(Color.BLUE)
-            paintRed.setStyle(Paint.Style.FILL)
 
             when (stepNum) {
                 3 -> firstCanvas.drawCircle(x.toFloat(), y.toFloat(), 25.0F, paintRed)
