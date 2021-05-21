@@ -26,7 +26,7 @@ class UnsharpMaskActivity: AppCompatActivity() {
 
         getImage()
 
-        startUnsharpMaskingBtn.setOnClickListener{
+        actionUnsharpBtn.setOnClickListener{
             unsharpMasking()
         }
     }
