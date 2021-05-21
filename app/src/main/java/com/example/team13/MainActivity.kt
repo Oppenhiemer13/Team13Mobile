@@ -38,14 +38,14 @@ import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
-    private val RESULT_LOAD_IMG = 1000
-    private val RESULT_CALL_CAMERA = 1001
+    private val resultLoadImg = 1000
+    private val resultCallCamera = 1001
 
-    private var transmissionImg : String = ""
-    private var cameraUri : Uri? = null
+    private var transmissionImg: String = ""
+    private var cameraUri: Uri? = null
 
-    lateinit var main : Mat
-    lateinit var copy : Mat
+    lateinit var main: Mat
+    lateinit var copy: Mat
     var cascFile: File? = null
     var faceDetector: CascadeClassifier? = null
 
@@ -64,44 +64,44 @@ class MainActivity : AppCompatActivity() {
         loadImgBtn.setOnClickListener {
             val photoPicker = Intent(Intent.ACTION_GET_CONTENT)
             photoPicker.type = "image/*"
-            startActivityForResult(photoPicker, RESULT_LOAD_IMG)
+            startActivityForResult(photoPicker, resultLoadImg)
         }
 
-        cameraBtn.setOnClickListener{
+        cameraBtn.setOnClickListener {
             val values = ContentValues()
             values.put(MediaStore.Images.Media.TITLE, "New Picture")
             values.put(MediaStore.Images.Media.DESCRIPTION, "From the Camera")
-            cameraUri =  contentResolver.insert(
+            cameraUri = contentResolver.insert(
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                 values
             )
 
             val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
             cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, cameraUri)
-            startActivityForResult(cameraIntent, RESULT_CALL_CAMERA)
+            startActivityForResult(cameraIntent, resultCallCamera)
         }
 
-        scaleBtn.setOnClickListener{
+        scaleBtn.setOnClickListener {
             startNewIntent(this, ScaleActivity::class.java)
         }
 
-        rotateBtn.setOnClickListener{
+        rotateBtn.setOnClickListener {
             startNewIntent(this, RotateActivity::class.java)
         }
 
-        filtersBtn.setOnClickListener{
+        filtersBtn.setOnClickListener {
             startNewIntent(this, FiltersActivity::class.java)
         }
 
-        unsharpMaskBtn.setOnClickListener{
+        unsharpMaskBtn.setOnClickListener {
             startNewIntent(this, UnsharpMaskActivity::class.java)
         }
 
-        faceDetBtn.setOnClickListener{
+        faceDetBtn.setOnClickListener {
             imageView.setImageBitmap(faceDetect())
         }
 
-        linearFilterBtn.setOnClickListener{
+        linearFilterBtn.setOnClickListener {
             startNewIntent(this, LinearFilteringActivity::class.java)
         }
     }
@@ -126,10 +126,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {   //вывод картинки на ImageView
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (resultCode == Activity.RESULT_OK && requestCode == RESULT_LOAD_IMG) {
+        if (resultCode == Activity.RESULT_OK && requestCode == resultLoadImg) {
 
             val selectedImageURI = data?.data
 
@@ -142,8 +142,7 @@ class MainActivity : AppCompatActivity() {
                 imageView.setImageBitmap(bmpImage)
                 enableButtons()
             }
-        }
-        else if(resultCode == Activity.RESULT_OK && requestCode == RESULT_CALL_CAMERA){
+        } else if (resultCode == Activity.RESULT_OK && requestCode == resultCallCamera) {
 
             if (cameraUri != null) {
 
@@ -193,7 +192,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun isEnabledCheck() {
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {  //запрос на доступ к данным
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {  //запрос на доступ к данным
             ActivityCompat.requestPermissions(
                 this,
                 arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
@@ -203,13 +206,21 @@ class MainActivity : AppCompatActivity() {
             loadImgBtn.isEnabled = true
         }
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.CAMERA
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), 112)
         } else {
             cameraBtn.isEnabled = true
         }
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
             ActivityCompat.requestPermissions(
                 this,
                 arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
@@ -228,7 +239,7 @@ class MainActivity : AppCompatActivity() {
         Utils.bitmapToMat(bitmap, main)
 
         cvtColor(copy, copy, Imgproc.COLOR_RGB2GRAY)
-        
+
         val faceDetections = MatOfRect()
         faceDetector!!.detectMultiScale(copy, faceDetections)
 
@@ -254,7 +265,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun saveToGallery() {
         val bitmap = imageView.drawable.toBitmap()
-        val fos : OutputStream
+        val fos: OutputStream
         val resolver = contentResolver
         val contentValues = ContentValues()
         contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, "test")
@@ -273,7 +284,7 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private fun disableButtons(){
+    private fun disableButtons() {
         loadImgBtn.isEnabled = false
         cameraBtn.isEnabled = false
         actionBtn.isEnabled = false
@@ -283,7 +294,7 @@ class MainActivity : AppCompatActivity() {
         unsharpMaskBtn.isEnabled = false
     }
 
-    private fun enableButtons(){
+    private fun enableButtons() {
         actionBtn.isEnabled = true
         faceDetBtn.isEnabled = true
         scaleBtn.isEnabled = true

@@ -1,5 +1,6 @@
 package com.example.team13
 
+import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.ImageDecoder
@@ -36,6 +37,7 @@ class RotateActivity : AppCompatActivity() {
 
         seekBar.setOnSeekBarChangeListener(
             object : SeekBar.OnSeekBarChangeListener {
+                @SuppressLint("SetTextI18n")
                 override fun onProgressChanged(
                     seekBar: SeekBar?,
                     progress: Int,
@@ -44,20 +46,22 @@ class RotateActivity : AppCompatActivity() {
                     degreesString.text = "Degrees: $progress"
                     val bitmap = getImage()
                     var pr = progress.toFloat()
-                    if (pr > 270) {
-                        pr -= 270
-                        imageView.setImageBitmap(bitmapRotate(pr, rotate270(bitmap)))
-                    }
-                    else if (pr > 180) {
-                        pr -= 180
-                        imageView.setImageBitmap(bitmapRotate(pr, rotate180(bitmap)))
-                    }
-                    else if (pr > 90) {
-                        pr -= 90
-                        imageView.setImageBitmap(bitmapRotate(pr, rotate90(bitmap)))
-                    }
-                    else {
-                        imageView.setImageBitmap(bitmapRotate(progress.toFloat(), bitmap))
+                    when {
+                        pr > 270 -> {
+                            pr -= 270
+                            imageView.setImageBitmap(bitmapRotate(pr, rotate270(bitmap)))
+                        }
+                        pr > 180 -> {
+                            pr -= 180
+                            imageView.setImageBitmap(bitmapRotate(pr, rotate180(bitmap)))
+                        }
+                        pr > 90 -> {
+                            pr -= 90
+                            imageView.setImageBitmap(bitmapRotate(pr, rotate90(bitmap)))
+                        }
+                        else -> {
+                            imageView.setImageBitmap(bitmapRotate(progress.toFloat(), bitmap))
+                        }
                     }
                 }
 
@@ -73,57 +77,56 @@ class RotateActivity : AppCompatActivity() {
     private fun getImage(): Bitmap {
         val selectedImageURI = intent.getStringExtra("ImageUri")!!.toUri()
         val source = ImageDecoder.createSource(this.contentResolver, selectedImageURI)
-        val bmpImage = ImageDecoder.decodeBitmap(source).copy(Bitmap.Config.RGBA_F16, true)
 
-        return bmpImage
+        return ImageDecoder.decodeBitmap(source).copy(Bitmap.Config.RGBA_F16, true)
     }
 
     private fun rotate90(bitmap: Bitmap): Bitmap {
-        val pictureWidth: Int = bitmap.getWidth()
-        val pictureHeight: Int = bitmap.getHeight()
+        val pictureWidth: Int = bitmap.width
+        val pictureHeight: Int = bitmap.height
         val newBitmap = Bitmap.createBitmap(pictureHeight, pictureWidth, bitmap.config)
 
         for (x in 0 until pictureWidth) {
             for (y in 0 until pictureHeight) {
                 val pixel: Int = bitmap.getPixel(x, y)
-                newBitmap.setPixel(y, pictureWidth-x-1, pixel)
+                newBitmap.setPixel(y, pictureWidth - x - 1, pixel)
             }
         }
         return newBitmap
     }
 
     private fun rotate180(bitmap: Bitmap): Bitmap {
-        val pictureWidth: Int = bitmap.getWidth()
-        val pictureHeight: Int = bitmap.getHeight()
+        val pictureWidth: Int = bitmap.width
+        val pictureHeight: Int = bitmap.height
         val newBitmap = Bitmap.createBitmap(pictureWidth, pictureHeight, bitmap.config)
 
         for (x in 0 until pictureWidth) {
             for (y in 0 until pictureHeight) {
                 val pixel: Int = bitmap.getPixel(x, y)
-                newBitmap.setPixel(pictureWidth-x-1, pictureHeight-y-1, pixel)
+                newBitmap.setPixel(pictureWidth - x - 1, pictureHeight - y - 1, pixel)
             }
         }
         return newBitmap
     }
 
     private fun rotate270(bitmap: Bitmap): Bitmap {
-        val pictureWidth: Int = bitmap.getWidth()
-        val pictureHeight: Int = bitmap.getHeight()
+        val pictureWidth: Int = bitmap.width
+        val pictureHeight: Int = bitmap.height
         val newBitmap = Bitmap.createBitmap(pictureHeight, pictureWidth, bitmap.config)
 
         for (x in 0 until pictureWidth) {
             for (y in 0 until pictureHeight) {
                 val pixel: Int = bitmap.getPixel(x, y)
-                newBitmap.setPixel(pictureHeight-y-1, x, pixel)
+                newBitmap.setPixel(pictureHeight - y - 1, x, pixel)
             }
         }
         return newBitmap
     }
 
-    private fun bitmapRotate (degrees: Float, bitmap: Bitmap): Bitmap? {
+    private fun bitmapRotate(degrees: Float, bitmap: Bitmap): Bitmap? {
         val angle = (3.14 * degrees) / 180
-        val pictureWidth: Int = bitmap.getWidth()
-        val pictureHeight: Int = bitmap.getHeight()
+        val pictureWidth: Int = bitmap.width
+        val pictureHeight: Int = bitmap.height
 
         val newWidth = (pictureWidth * cos(angle) + pictureHeight * sin(angle)).toInt()
         val newHeight = (pictureHeight * cos(angle) + pictureWidth * sin(angle)).toInt()
@@ -132,8 +135,10 @@ class RotateActivity : AppCompatActivity() {
 
         for (x in 0 until newWidth) {
             for (y in 0 until newHeight) {
-                val xn = (x-newWidth/2)* cos(angle) - (y-newHeight/2)* sin(angle) + pictureWidth/2
-                val yn = (x-newWidth/2)* sin(angle) + (y-newHeight/2)* cos(angle) + pictureHeight/2
+                val xn =
+                    (x - newWidth / 2) * cos(angle) - (y - newHeight / 2) * sin(angle) + pictureWidth / 2
+                val yn =
+                    (x - newWidth / 2) * sin(angle) + (y - newHeight / 2) * cos(angle) + pictureHeight / 2
                 if (xn >= 0 && xn <= pictureWidth && yn >= 0 && yn <= pictureHeight) {
                     val pixel: Int = bitmap.getPixel(xn.toInt(), yn.toInt())
                     newBitmap.setPixel(x, y, pixel)

@@ -21,11 +21,11 @@ class ScaleActivity : AppCompatActivity() {
         getImage()
 
         actionBtn.setOnClickListener {
-           interpolation()
+            interpolation()
         }
     }
 
-    private fun getImage(){
+    private fun getImage() {
         val selectedImageURI = intent.getStringExtra("ImageUri")!!.toUri()
         val source = ImageDecoder.createSource(this.contentResolver, selectedImageURI)
         val bmpImage = ImageDecoder.decodeBitmap(source).copy(Bitmap.Config.RGBA_F16, true)
@@ -33,25 +33,25 @@ class ScaleActivity : AppCompatActivity() {
         imageView.setImageBitmap(bmpImage)
     }
 
-    private fun interpolation(){
+    private fun interpolation() {
 
         val bmpImage = imageView.drawable.toBitmap()
         val scale = scaleEditText.text.toString().toDouble()
 
 
-        val oldw = bmpImage.width
-        val oldh = bmpImage.height
-        val neww = (bmpImage.width * scale).toInt()
-        val newh = (bmpImage.height * scale).toInt()
+        val oldWidth = bmpImage.width
+        val oldHeight = bmpImage.height
+        val newWidth = (bmpImage.width * scale).toInt()
+        val newHeight = (bmpImage.height * scale).toInt()
 
-        val newBmp = Bitmap.createBitmap(neww, newh, Bitmap.Config.RGBA_F16)
+        val newBmp = Bitmap.createBitmap(newWidth, newHeight, Bitmap.Config.RGBA_F16)
 
 
-        val xRatio : Float = (oldw - 1).toFloat() / (neww - 1)
-        val yRatio : Float = (oldh - 1).toFloat() / (newh - 1)
+        val xRatio: Float = (oldWidth - 1).toFloat() / (newWidth - 1)
+        val yRatio: Float = (oldHeight - 1).toFloat() / (newHeight - 1)
 
-        for(x in 0 until neww){
-            for(y in 0 until newh){
+        for (x in 0 until newWidth) {
+            for (y in 0 until newHeight) {
 
                 val xTop = floor(xRatio * x).toInt()
                 val yLeft = floor(yRatio * y).toInt()
@@ -67,16 +67,19 @@ class ScaleActivity : AppCompatActivity() {
                 val f01 = bmpImage.getColor(xTop, yRight)
                 val f11 = bmpImage.getColor(xBot, yRight)
 
-                val newPixelRed = f00.red() * (1 - xDelta) * (1 - yDelta) + f10.red() * xDelta * (1 -yDelta) +
-                        f01.red() * yDelta * (1 - xDelta) + f11.red() * xDelta * yDelta
+                val newPixelRed =
+                    f00.red() * (1 - xDelta) * (1 - yDelta) + f10.red() * xDelta * (1 - yDelta) +
+                            f01.red() * yDelta * (1 - xDelta) + f11.red() * xDelta * yDelta
 
-                val newPixelGreen = f00.green() * (1 - xDelta) * (1 - yDelta) + f10.green() * xDelta * (1 -yDelta) +
-                        f01.green() * yDelta * (1 - xDelta) + f11.green() * xDelta * yDelta
+                val newPixelGreen =
+                    f00.green() * (1 - xDelta) * (1 - yDelta) + f10.green() * xDelta * (1 - yDelta) +
+                            f01.green() * yDelta * (1 - xDelta) + f11.green() * xDelta * yDelta
 
-                val newPixelBlue = f00.blue() * (1 - xDelta) * (1 - yDelta) + f10.blue() * xDelta * (1 -yDelta) +
-                        f01.blue() * yDelta * (1 - xDelta) + f11.blue() * xDelta * yDelta
+                val newPixelBlue =
+                    f00.blue() * (1 - xDelta) * (1 - yDelta) + f10.blue() * xDelta * (1 - yDelta) +
+                            f01.blue() * yDelta * (1 - xDelta) + f11.blue() * xDelta * yDelta
 
-                newBmp.setPixel(x,y, Color.rgb(newPixelRed,newPixelGreen, newPixelBlue))
+                newBmp.setPixel(x, y, Color.rgb(newPixelRed, newPixelGreen, newPixelBlue))
             }
         }
 

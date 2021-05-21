@@ -4,7 +4,6 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.ImageDecoder
 import android.graphics.drawable.BitmapDrawable
-import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageView
@@ -12,7 +11,6 @@ import android.widget.SeekBar
 import androidx.core.net.toUri
 import kotlinx.android.synthetic.main.activity_filters.*
 import kotlinx.android.synthetic.main.activity_main.imageView
-import kotlinx.android.synthetic.main.scale_activity.*
 import kotlin.math.PI
 import kotlin.math.pow
 import kotlin.math.roundToInt
@@ -25,28 +23,28 @@ class FiltersActivity : AppCompatActivity() {
 
         getImage()
 
-        greenFilterBtn.setOnClickListener{
+        greenFilterBtn.setOnClickListener {
             greenFilter()
         }
 
-        blurBtn.setOnClickListener{
+        blurBtn.setOnClickListener {
             gaussianBlur()
         }
 
-        medianBtn.setOnClickListener{
+        medianBtn.setOnClickListener {
             medianFilter()
         }
 
-        contrastBtn.setOnClickListener{
+        contrastBtn.setOnClickListener {
             contrastFilter()
         }
 
-        sharpnessBtn.setOnClickListener{
+        sharpnessBtn.setOnClickListener {
             increaseSharpness()
         }
     }
 
-    private fun getImage(){
+    private fun getImage() {
         val selectedImageURI = intent.getStringExtra("ImageUri")!!.toUri()
         val source = ImageDecoder.createSource(this.contentResolver, selectedImageURI)
         val bmpImage = ImageDecoder.decodeBitmap(source).copy(Bitmap.Config.RGBA_F16, true)
@@ -57,12 +55,12 @@ class FiltersActivity : AppCompatActivity() {
     private fun greenFilter() {
 
         val imageView1: ImageView = findViewById(R.id.imageView)
-        val bitmap1 = (imageView1.getDrawable() as BitmapDrawable).bitmap
-        val pictureWidth: Int = bitmap1.getWidth()
-        val pictureHeight: Int = bitmap1.getHeight()
+        val bitmap1 = (imageView1.drawable as BitmapDrawable).bitmap
+        val pictureWidth: Int = bitmap1.width
+        val pictureHeight: Int = bitmap1.height
         val newPicture = Bitmap.createBitmap(pictureWidth, pictureHeight, bitmap1.config)
 
-        val valueSeekBar: SeekBar = findViewById(R.id.seekBar);
+        val valueSeekBar = seekBar
         val currentNumberOfSeekBar: Int = valueSeekBar.progress
         val percentGreen: Int = currentNumberOfSeekBar
 
@@ -87,13 +85,12 @@ class FiltersActivity : AppCompatActivity() {
     private fun gaussianMatrix(sizeArr: Int, sigmaValue: Double): DoubleArray {
 
         fun gaussianValue(r: Int, sigma: Double): Double {
-            val exponent: Double = 2.71828182845904523536
+            val exponent = 2.71828182845904523536
             val forExponent: Double = -1.0 * (r * r) / (2 * sigma * sigma)
-            val answer = exponent.pow(forExponent) / sqrt(2 * PI * sigma * sigma)
-            return answer
+            return exponent.pow(forExponent) / sqrt(2 * PI * sigma * sigma)
         }
 
-        var gaussianDistribution = DoubleArray(sizeArr, { 0.0 })
+        val gaussianDistribution = DoubleArray(sizeArr) { 0.0 }
 
         var sum = 0.0
         for (i in 0 until sizeArr) {
@@ -107,14 +104,16 @@ class FiltersActivity : AppCompatActivity() {
         return gaussianDistribution
     }
 
-    private fun gaussianMove(x: Int,
-                             y: Int,
-                             gaussianDistribution: DoubleArray,
-                             orientationArr: Boolean,
-                             sizeArr: Int,
-                             bitmap1: Bitmap,
-                             width: Int,
-                             height: Int): Int {
+    private fun gaussianMove(
+        x: Int,
+        y: Int,
+        gaussianDistribution: DoubleArray,
+        orientationArr: Boolean,
+        sizeArr: Int,
+        bitmap1: Bitmap,
+        width: Int,
+        height: Int
+    ): Int {
 
         val leftNum: Int = -(sizeArr - 1) / 2
         val rightNum: Int = (sizeArr - 1) / 2
@@ -123,7 +122,6 @@ class FiltersActivity : AppCompatActivity() {
 
         var newPixel: Int = Color.argb(0, 0, 0, 0)
         var newPixelAlpha = Color.alpha(currentPixel)
-        //println("alpha " + newPixelAlpha)
         var newPixelRed = Color.red(newPixel)
         var newPixelGreen = Color.green(newPixel)
         var newPixelBlue = Color.blue(newPixel)
@@ -131,17 +129,14 @@ class FiltersActivity : AppCompatActivity() {
         if (orientationArr) {
 
             for (i in leftNum..rightNum) {
-                if (x + i >= 0 && x + i < width){
+                if (x + i in 0 until width) {
 
                     val pixelColor: Int = bitmap1.getPixel(x + i, y)
-                    //val pixelAlpha = Color.alpha(pixelColor)
                     val pixelRed = Color.red(pixelColor)
                     val pixelGreen = Color.green(pixelColor)
                     val pixelBlue = Color.blue(pixelColor)
 
-                    var newIndex: Int = i + (sizeArr - 1) / 2
-                    //newPixelAlpha += (Math.round(pixelAlpha * gaussianDistribution[newIndex])).toInt()
-                    //println("kjhlk" + pixelRed + " " + gaussianDistribution[newIndex])
+                    val newIndex: Int = i + (sizeArr - 1) / 2
                     newPixelRed += ((pixelRed * gaussianDistribution[newIndex]).roundToInt())
                     newPixelGreen += ((pixelGreen * gaussianDistribution[newIndex]).roundToInt())
                     newPixelBlue += ((pixelBlue * gaussianDistribution[newIndex]).roundToInt())
@@ -163,19 +158,16 @@ class FiltersActivity : AppCompatActivity() {
 
             newPixel = Color.argb(newPixelAlpha, newPixelRed, newPixelGreen, newPixelBlue)
 
-        }
-        else {
+        } else {
             for (i in leftNum..rightNum) {
-                if (y + i >= 0 && y + i < height){
+                if (y + i in 0 until height) {
 
                     val pixelColor: Int = bitmap1.getPixel(x, y + i)
-                    //val pixelAlpha = Color.alpha(pixelColor)
                     val pixelRed = Color.red(pixelColor)
                     val pixelGreen = Color.green(pixelColor)
                     val pixelBlue = Color.blue(pixelColor)
 
-                    var newIndex: Int = i + (sizeArr - 1) / 2
-                    //newPixelAlpha += (Math.round(pixelAlpha * gaussianDistribution[newIndex])).toInt()
+                    val newIndex: Int = i + (sizeArr - 1) / 2
                     newPixelRed += ((pixelRed * gaussianDistribution[newIndex]).roundToInt())
                     newPixelGreen += ((pixelGreen * gaussianDistribution[newIndex]).roundToInt())
                     newPixelBlue += ((pixelBlue * gaussianDistribution[newIndex]).roundToInt())
@@ -203,28 +195,45 @@ class FiltersActivity : AppCompatActivity() {
 
     fun makeGaussianBlur(originalPicture: Bitmap, radius: Int, sigma: Double): Bitmap {
 
-        var gaussionDistribution = gaussianMatrix(radius, sigma)
+        val gaussianDistribution = gaussianMatrix(radius, sigma)
 
-        val pictureWidth: Int = originalPicture.getWidth()
-        val pictureHeight: Int = originalPicture.getHeight()
+        val pictureWidth: Int = originalPicture.width
+        val pictureHeight: Int = originalPicture.height
         val newPicture = Bitmap.createBitmap(pictureWidth, pictureHeight, originalPicture.config)
         val newPicture2 = Bitmap.createBitmap(pictureWidth, pictureHeight, originalPicture.config)
 
         for (l in 0..1) {
 
-            var orientationMatrix: Boolean = true
-            if (l == 1){
+            var orientationMatrix = true
+            if (l == 1) {
                 orientationMatrix = false
             }
 
             for (x in 0 until pictureWidth) {
                 for (y in 0 until pictureHeight) {
                     if (orientationMatrix) {
-                        var newPixel = gaussianMove(x, y, gaussionDistribution, orientationMatrix, radius, originalPicture, pictureWidth, pictureHeight)
+                        val newPixel = gaussianMove(
+                            x,
+                            y,
+                            gaussianDistribution,
+                            orientationMatrix,
+                            radius,
+                            originalPicture,
+                            pictureWidth,
+                            pictureHeight
+                        )
                         newPicture.setPixel(x, y, newPixel)
-                    }
-                    else {
-                        var newPixel = gaussianMove(x, y, gaussionDistribution, orientationMatrix, radius, newPicture, pictureWidth, pictureHeight)
+                    } else {
+                        val newPixel = gaussianMove(
+                            x,
+                            y,
+                            gaussianDistribution,
+                            orientationMatrix,
+                            radius,
+                            newPicture,
+                            pictureWidth,
+                            pictureHeight
+                        )
                         newPicture2.setPixel(x, y, newPixel)
                     }
                 }
@@ -234,9 +243,9 @@ class FiltersActivity : AppCompatActivity() {
         return newPicture2
     }
 
-    private fun gaussianBlur( ) {
+    private fun gaussianBlur() {
 
-        val valueSeekBar: SeekBar = findViewById(R.id.seekBar);
+        val valueSeekBar: SeekBar = seekBar
         val currentNumberOfSeekBar: Int = valueSeekBar.progress
         val sigmaValue: Double = currentNumberOfSeekBar / 15.0
         var sizeArr: Int = (sigmaValue * 3).toInt()
@@ -248,37 +257,39 @@ class FiltersActivity : AppCompatActivity() {
         }
 
         val imageView1: ImageView = findViewById(R.id.imageView)
-        val bitmap1 = (imageView1.getDrawable() as BitmapDrawable).bitmap
+        val bitmap1 = (imageView1.drawable as BitmapDrawable).bitmap
 
         val newPicture = makeGaussianBlur(bitmap1, sizeArr, sigmaValue)
 
         imageView1.setImageBitmap(newPicture)
     }
 
-    private fun getNewMedianPixel(x: Int,
-                                  y: Int,
-                                  sizeMedian: Int,
-                                  bitmap1: Bitmap,
-                                  downSide: Int,
-                                  rightSide: Int): Int {
+    private fun getNewMedianPixel(
+        x: Int,
+        y: Int,
+        sizeMedian: Int,
+        bitmap1: Bitmap,
+        downSide: Int,
+        rightSide: Int
+    ): Int {
 
         val leftValue = -(sizeMedian - 1) / 2
         val rightValue = (sizeMedian - 1) / 2
 
-        var alphaMedian = Array(sizeMedian * sizeMedian, { 0 })
-        var redMedian = Array(sizeMedian * sizeMedian, { 0 })
-        var greenMedian = Array(sizeMedian * sizeMedian, { 0 })
-        var blueMedian = Array(sizeMedian * sizeMedian, { 0 })
+        val alphaMedian = Array(sizeMedian * sizeMedian) { 0 }
+        val redMedian = Array(sizeMedian * sizeMedian) { 0 }
+        val greenMedian = Array(sizeMedian * sizeMedian) { 0 }
+        val blueMedian = Array(sizeMedian * sizeMedian) { 0 }
 
         var num = 0
         for (i in leftValue..rightValue) {
             for (j in leftValue..rightValue) {
-                if (i + x >= 0 && i + x < rightSide && i + y >= 0 && i + y < downSide) {
-                    var currentPixel = bitmap1.getPixel(x + i, y + i)
-                    var currentPixelAlpha: Int = Color.alpha(currentPixel)
-                    var currentPixelRed: Int = Color.red(currentPixel)
-                    var currentPixelGreen: Int = Color.green(currentPixel)
-                    var currentPixelBlue: Int = Color.blue(currentPixel)
+                if (i + x in 0 until rightSide && i + y in 0 until downSide) {
+                    val currentPixel = bitmap1.getPixel(x + i, y + i)
+                    val currentPixelAlpha: Int = Color.alpha(currentPixel)
+                    val currentPixelRed: Int = Color.red(currentPixel)
+                    val currentPixelGreen: Int = Color.green(currentPixel)
+                    val currentPixelBlue: Int = Color.blue(currentPixel)
 
                     alphaMedian[num] = currentPixelAlpha
                     redMedian[num] = currentPixelRed
@@ -301,44 +312,34 @@ class FiltersActivity : AppCompatActivity() {
         val pixelGreen: Int = greenMedian[medianNumber]
         val pixelBlue: Int = blueMedian[medianNumber]
 
-        val pixelColor: Int = Color.argb(pixelAlpha, pixelRed, pixelGreen, pixelBlue)
-
-        return pixelColor
+        return Color.argb(pixelAlpha, pixelRed, pixelGreen, pixelBlue)
     }
 
     private fun medianFilter() {
         val imageView1: ImageView = findViewById(R.id.imageView)
-        val bitmap1 = (imageView1.getDrawable() as BitmapDrawable).bitmap
-        val pictureWidth: Int = bitmap1.getWidth()
-        val pictureHeight: Int = bitmap1.getHeight()
-        val newPicture = bitmap1
+        val bitmap1 = (imageView1.drawable as BitmapDrawable).bitmap
+        val pictureWidth: Int = bitmap1.width
+        val pictureHeight: Int = bitmap1.height
 
-        var sizeArr = 3
+        val sizeArr = 3
 
         for (x in 0 until pictureWidth) {
-            //if (x % 2 == 1) {
-                for (y in 0 until pictureHeight) {
-                    val newPixel = getNewMedianPixel(x, y, sizeArr, bitmap1, pictureHeight, pictureWidth)
-                    newPicture.setPixel(x, y, newPixel)
-                }
-            //}
-            //else {
-                //for (y in (pictureHeight)..0) {
-                    //val newPixel = getNewMedianPixel(x, y, sizeArr, newPicture, pictureHeight, pictureWidth)
-                    //newPicture.setPixel(x, y, newPixel)
-                //}
-            //}
+            for (y in 0 until pictureHeight) {
+                val newPixel =
+                    getNewMedianPixel(x, y, sizeArr, bitmap1, pictureHeight, pictureWidth)
+                bitmap1.setPixel(x, y, newPixel)
+            }
         }
 
-        imageView1.setImageBitmap(newPicture)
+        imageView1.setImageBitmap(bitmap1)
     }
 
     private fun getCommonContrast(bitmap1: Bitmap): LongArray {
 
-        val commonPixelColor = LongArray(4, { 0 })
+        val commonPixelColor = LongArray(4) { 0 }
 
-        val pictureWidth: Int = bitmap1.getWidth()
-        val pictureHeight: Int = bitmap1.getHeight()
+        val pictureWidth: Int = bitmap1.width
+        val pictureHeight: Int = bitmap1.height
 
         for (x in 0 until pictureWidth) {
             for (y in 0 until pictureHeight) {
@@ -360,24 +361,25 @@ class FiltersActivity : AppCompatActivity() {
 
     private fun contrastFilter() {
         val imageView1: ImageView = findViewById(R.id.imageView)
-        val bitmap1 = (imageView1.getDrawable() as BitmapDrawable).bitmap
-        val pictureWidth: Int = bitmap1.getWidth()
-        val pictureHeight: Int = bitmap1.getHeight()
+        val bitmap1 = (imageView1.drawable as BitmapDrawable).bitmap
+        val pictureWidth: Int = bitmap1.width
+        val pictureHeight: Int = bitmap1.height
         val newPicture = Bitmap.createBitmap(pictureWidth, pictureHeight, bitmap1.config)
 
-        val valueSeekBar: SeekBar = findViewById(R.id.seekBar);
+        val valueSeekBar: SeekBar = findViewById(R.id.seekBar)
         val currentNumberOfSeekBar: Int = valueSeekBar.progress
-        val contrastValue: Double = currentNumberOfSeekBar / 50.0;
+        val contrastValue: Double = currentNumberOfSeekBar / 50.0
 
         val commonPixelColor = getCommonContrast(bitmap1)
         for (i in 0..3) {
-            commonPixelColor[i] = (commonPixelColor[i] / (pictureHeight * pictureWidth)).toLong()
+            commonPixelColor[i] = (commonPixelColor[i] / (pictureHeight * pictureWidth))
         }
 
         for (x in 0 until pictureWidth) {
             for (y in 0 until pictureHeight) {
                 val pixelColor: Int = bitmap1.getPixel(x, y)
-                var pixelAlpha: Int = (contrastValue * (Color.alpha(pixelColor) - commonPixelColor[0]) + commonPixelColor[0]).toInt()
+                var pixelAlpha: Int =
+                    (contrastValue * (Color.alpha(pixelColor) - commonPixelColor[0]) + commonPixelColor[0]).toInt()
                 if (pixelAlpha > 255) {
                     pixelAlpha = 255
                 } else {
@@ -386,7 +388,8 @@ class FiltersActivity : AppCompatActivity() {
                     }
                 }
 
-                var pixelRed: Int = (contrastValue * (Color.red(pixelColor) - commonPixelColor[1]) + commonPixelColor[1]).toInt()
+                var pixelRed: Int =
+                    (contrastValue * (Color.red(pixelColor) - commonPixelColor[1]) + commonPixelColor[1]).toInt()
                 if (pixelRed > 255) {
                     pixelRed = 255
                 } else {
@@ -395,7 +398,8 @@ class FiltersActivity : AppCompatActivity() {
                     }
                 }
 
-                var pixelGreen: Int = (contrastValue * (Color.green(pixelColor) - commonPixelColor[2]) + commonPixelColor[2]).toInt()
+                var pixelGreen: Int =
+                    (contrastValue * (Color.green(pixelColor) - commonPixelColor[2]) + commonPixelColor[2]).toInt()
                 if (pixelGreen > 255) {
                     pixelGreen = 255
                 } else {
@@ -404,7 +408,8 @@ class FiltersActivity : AppCompatActivity() {
                     }
                 }
 
-                var pixelBlue: Int = (contrastValue * (Color.blue(pixelColor) - commonPixelColor[3]) + commonPixelColor[3]).toInt()
+                var pixelBlue: Int =
+                    (contrastValue * (Color.blue(pixelColor) - commonPixelColor[3]) + commonPixelColor[3]).toInt()
                 if (pixelBlue > 255) {
                     pixelBlue = 255
                 } else {
@@ -423,25 +428,24 @@ class FiltersActivity : AppCompatActivity() {
 
     private fun increaseSharpness() {
 
-        val foldingMatrix = Array(3, { Array(3, {0}) })
+        val foldingMatrix = Array(3) { Array(3) { 0 } }
         foldingMatrix[0] = arrayOf(-1, -1, -1)
         foldingMatrix[1] = arrayOf(-1, 9, -1)
         foldingMatrix[2] = arrayOf(-1, -1, -1)
 
         val imageView1: ImageView = findViewById(R.id.imageView)
-        val bitmap1 = (imageView1.getDrawable() as BitmapDrawable).bitmap
-        val pictureWidth: Int = bitmap1.getWidth()
-        val pictureHeight: Int = bitmap1.getHeight()
+        val bitmap1 = (imageView1.drawable as BitmapDrawable).bitmap
+        val pictureWidth: Int = bitmap1.width
+        val pictureHeight: Int = bitmap1.height
         val newPicture = Bitmap.createBitmap(pictureWidth, pictureHeight, bitmap1.config)
 
         for (i in 1 until pictureWidth - 1) {
             for (j in 1 until pictureHeight - 1) {
 
-                val pixelColor: Int = bitmap1.getPixel(i, j)
-                var pixelAlpha: Int = 0
-                var pixelRed: Int = 0
-                var pixelGreen: Int = 0
-                var pixelBlue: Int = 0
+                var pixelAlpha = 0
+                var pixelRed = 0
+                var pixelGreen = 0
+                var pixelBlue = 0
 
                 for (k in (i - 1)..(i + 1)) {
                     for (l in (j - 1)..(j + 1)) {
