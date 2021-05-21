@@ -9,9 +9,15 @@ import android.os.Bundle
 import android.widget.ImageView
 import android.widget.SeekBar
 import androidx.core.net.toUri
+import kotlinx.android.synthetic.main.activity_filters.*
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_main.imageView
 import kotlinx.android.synthetic.main.activity_unsharpmask.*
-
-
+import kotlinx.android.synthetic.main.scale_activity.*
+import kotlin.math.PI
+import kotlin.math.pow
+import kotlin.math.roundToInt
+import kotlin.math.sqrt
 
 class UnsharpMaskActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,7 +26,7 @@ class UnsharpMaskActivity: AppCompatActivity() {
 
         getImage()
 
-        actionBtn.setOnClickListener{
+        startUnsharpMaskingBtn.setOnClickListener{
             unsharpMasking()
         }
     }
@@ -31,6 +37,24 @@ class UnsharpMaskActivity: AppCompatActivity() {
         val bmpImage = ImageDecoder.decodeBitmap(source).copy(Bitmap.Config.RGBA_F16, true)
 
         imageView.setImageBitmap(bmpImage)
+    }
+
+    private fun normalizePixel(original: Int, blured:Int, threshold: Int, amount: Double, newPixel: Int): Int {
+
+        var newPixelCopy = newPixel
+
+        if (Math.abs(original - blured) > threshold) {
+            newPixelCopy = (original + (original - blured) * amount).toInt()
+            if (newPixelCopy < 0) {
+                newPixelCopy = 0
+            } else {
+                if (newPixelCopy > 255) {
+                    newPixelCopy = 255
+                }
+            }
+        }
+
+        return newPixelCopy
     }
 
     private fun createUnsharpPicture(originalBitmap: Bitmap, bluredBitmap: Bitmap, amountValue: Double, thresholdValue: Int): Bitmap {
