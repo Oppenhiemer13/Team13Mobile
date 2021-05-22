@@ -140,7 +140,7 @@ class RotateActivity : AppCompatActivity() {
                     (x - newWidth / 2) * cos(angle) - (y - newHeight / 2) * sin(angle) + pictureWidth / 2
                 val yn =
                     (x - newWidth / 2) * sin(angle) + (y - newHeight / 2) * cos(angle) + pictureHeight / 2
-                if (xn >= 0 && xn <= pictureWidth && yn >= 0 && yn <= pictureHeight) {
+                if (xn >= 0 && xn < pictureWidth && yn >= 0 && yn < pictureHeight) {
                     val pixel: Int = bitmap.getPixel(xn.toInt(), yn.toInt())
                     newBitmap.setPixel(x, y, pixel)
                 }

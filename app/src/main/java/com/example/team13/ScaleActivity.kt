@@ -49,8 +49,8 @@ class ScaleActivity : AppCompatActivity() {
 
         val oldWidth = bmpImage.width
         val oldHeight = bmpImage.height
-        val newWidth = (bmpImage.width * scale).toInt()
-        val newHeight = (bmpImage.height * scale).toInt()
+        val newWidth = ceil(bmpImage.width * scale).toInt()
+        val newHeight = ceil(bmpImage.height * scale).toInt()
 
         val newBmp = Bitmap.createBitmap(newWidth, newHeight, Bitmap.Config.RGBA_F16)
 
