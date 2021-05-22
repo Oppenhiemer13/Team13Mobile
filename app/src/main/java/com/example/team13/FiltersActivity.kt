@@ -107,18 +107,9 @@ class FiltersActivity : AppCompatActivity() {
         return gaussianDistribution
     }
 
-    private fun gaussianMove(x: Int,
-                             y: Int,
-                             gaussianDistribution: DoubleArray,
-                             orientationArr: Boolean,
-                             sizeArr: Int,
-                             bitmap1: Bitmap,
-                             width: Int,
-                             height: Int): Int {
-
+    private fun firstOrientationMove(sizeArr: Int, x: Int, y: Int, bitmap1: Bitmap, width: Int, gaussianDistribution: DoubleArray): Int {
         val leftNum: Int = -(sizeArr - 1) / 2
         val rightNum: Int = (sizeArr - 1) / 2
-
         val currentPixel: Int = bitmap1.getPixel(x, y)
 
         var newPixel: Int = Color.argb(0, 0, 0, 0)
@@ -127,69 +118,80 @@ class FiltersActivity : AppCompatActivity() {
         var newPixelGreen = Color.green(newPixel)
         var newPixelBlue = Color.blue(newPixel)
 
-        if (orientationArr) {
+        for (i in leftNum..rightNum) {
+            if (x + i >= 0 && x + i < width){
 
-            for (i in leftNum..rightNum) {
-                if (x + i >= 0 && x + i < width){
+                val pixelColor: Int = bitmap1.getPixel(x + i, y)
+                val pixelRed = Color.red(pixelColor)
+                val pixelGreen = Color.green(pixelColor)
+                val pixelBlue = Color.blue(pixelColor)
 
-                    val pixelColor: Int = bitmap1.getPixel(x + i, y)
-                    val pixelRed = Color.red(pixelColor)
-                    val pixelGreen = Color.green(pixelColor)
-                    val pixelBlue = Color.blue(pixelColor)
+                var newIndex: Int = i + (sizeArr - 1) / 2
+                println("hhh: " + gaussianDistribution[newIndex])
+                newPixelRed += ((pixelRed * gaussianDistribution[newIndex]).roundToInt())
+                newPixelGreen += ((pixelGreen * gaussianDistribution[newIndex]).roundToInt())
+                newPixelBlue += ((pixelBlue * gaussianDistribution[newIndex]).roundToInt())
 
-                    var newIndex: Int = i + (sizeArr - 1) / 2
-                    newPixelRed += ((pixelRed * gaussianDistribution[newIndex]).roundToInt())
-                    newPixelGreen += ((pixelGreen * gaussianDistribution[newIndex]).roundToInt())
-                    newPixelBlue += ((pixelBlue * gaussianDistribution[newIndex]).roundToInt())
-
-                    if (newPixelAlpha > 255) {
-                        newPixelAlpha = 255
-                    }
-                    if (newPixelRed > 255) {
-                        newPixelRed = 255
-                    }
-                    if (newPixelGreen > 255) {
-                        newPixelGreen = 255
-                    }
-                    if (newPixelBlue > 255) {
-                        newPixelBlue = 255
-                    }
-                }
+                if (newPixelAlpha > 255) newPixelAlpha = 255
+                if (newPixelRed > 255) newPixelRed = 255
+                if (newPixelGreen > 255) newPixelGreen = 255
+                if (newPixelBlue > 255) newPixelBlue = 255
             }
+        }
 
-            newPixel = Color.argb(newPixelAlpha, newPixelRed, newPixelGreen, newPixelBlue)
+        newPixel = Color.argb(newPixelAlpha, newPixelRed, newPixelGreen, newPixelBlue)
+        return newPixel
+    }
 
+    private fun secondOrientationMove(sizeArr: Int, x: Int, y: Int, bitmap1: Bitmap, height: Int, gaussianDistribution: DoubleArray) : Int{
+        val leftNum: Int = -(sizeArr - 1) / 2
+        val rightNum: Int = (sizeArr - 1) / 2
+        val currentPixel: Int = bitmap1.getPixel(x, y)
+
+        var newPixel: Int = Color.argb(0, 0, 0, 0)
+        var newPixelAlpha = Color.alpha(currentPixel)
+        var newPixelRed = Color.red(newPixel)
+        var newPixelGreen = Color.green(newPixel)
+        var newPixelBlue = Color.blue(newPixel)
+
+        for (i in leftNum..rightNum) {
+            if (y + i >= 0 && y + i < height){
+                val pixelColor: Int = bitmap1.getPixel(x, y + i)
+                val pixelRed = Color.red(pixelColor)
+                val pixelGreen = Color.green(pixelColor)
+                val pixelBlue = Color.blue(pixelColor)
+
+                var newIndex: Int = i + (sizeArr - 1) / 2
+                newPixelRed += ((pixelRed * gaussianDistribution[newIndex]).roundToInt())
+                newPixelGreen += ((pixelGreen * gaussianDistribution[newIndex]).roundToInt())
+                newPixelBlue += ((pixelBlue * gaussianDistribution[newIndex]).roundToInt())
+
+                if (newPixelAlpha > 255) newPixelAlpha = 255
+                if (newPixelRed > 255) newPixelRed = 255
+                if (newPixelGreen > 255) newPixelGreen = 255
+                if (newPixelBlue > 255) newPixelBlue = 255
+            }
+        }
+
+        newPixel = Color.argb(newPixelAlpha, newPixelRed, newPixelGreen, newPixelBlue)
+        return newPixel
+    }
+
+    private fun gaussianMove(x: Int,
+                             y: Int,
+                             gaussianDistribution: DoubleArray,
+                             orientationArr: Boolean,
+                             sizeArr: Int,
+                             bitmap1: Bitmap,
+                             width: Int,
+                             height: Int): Int {
+        var newPixel: Int = Color.argb(0, 0, 0, 0)
+
+        if (orientationArr) {
+            newPixel = firstOrientationMove(sizeArr, x, y, bitmap1, width, gaussianDistribution)
         }
         else {
-            for (i in leftNum..rightNum) {
-                if (y + i >= 0 && y + i < height){
-
-                    val pixelColor: Int = bitmap1.getPixel(x, y + i)
-                    val pixelRed = Color.red(pixelColor)
-                    val pixelGreen = Color.green(pixelColor)
-                    val pixelBlue = Color.blue(pixelColor)
-
-                    var newIndex: Int = i + (sizeArr - 1) / 2
-                    newPixelRed += ((pixelRed * gaussianDistribution[newIndex]).roundToInt())
-                    newPixelGreen += ((pixelGreen * gaussianDistribution[newIndex]).roundToInt())
-                    newPixelBlue += ((pixelBlue * gaussianDistribution[newIndex]).roundToInt())
-
-                    if (newPixelAlpha > 255) {
-                        newPixelAlpha = 255
-                    }
-                    if (newPixelRed > 255) {
-                        newPixelRed = 255
-                    }
-                    if (newPixelGreen > 255) {
-                        newPixelGreen = 255
-                    }
-                    if (newPixelBlue > 255) {
-                        newPixelBlue = 255
-                    }
-                }
-            }
-
-            newPixel = Color.argb(newPixelAlpha, newPixelRed, newPixelGreen, newPixelBlue)
+            newPixel = secondOrientationMove(sizeArr, x, y, bitmap1, height, gaussianDistribution)
         }
 
         return newPixel
@@ -205,7 +207,6 @@ class FiltersActivity : AppCompatActivity() {
         val newPicture2 = Bitmap.createBitmap(pictureWidth, pictureHeight, originalPicture.config)
 
         for (l in 0..1) {
-
             var orientationMatrix: Boolean = true
             if (l == 1){
                 orientationMatrix = false
@@ -232,7 +233,7 @@ class FiltersActivity : AppCompatActivity() {
 
         val valueSeekBar: SeekBar = findViewById(R.id.seekBar);
         val currentNumberOfSeekBar: Int = valueSeekBar.progress
-        val sigmaValue: Double = currentNumberOfSeekBar / 15.0
+        var sigmaValue: Double = currentNumberOfSeekBar / 15.0
         var sizeArr: Int = (sigmaValue * 3).toInt()
         if (sizeArr % 2 == 0) {
             sizeArr += 1
@@ -240,10 +241,12 @@ class FiltersActivity : AppCompatActivity() {
         if (sizeArr < 3) {
             sizeArr = 3
         }
+        if (sigmaValue == 0.0) {
+            sigmaValue = 1.0
+        }
 
         val imageView1: ImageView = findViewById(R.id.imageView)
         val bitmap1 = (imageView1.getDrawable() as BitmapDrawable).bitmap
-
         val newPicture = makeGaussianBlur(bitmap1, sizeArr, sigmaValue)
 
         imageView1.setImageBitmap(newPicture)
