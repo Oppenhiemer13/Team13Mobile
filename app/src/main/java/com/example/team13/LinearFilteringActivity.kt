@@ -1,6 +1,5 @@
 package com.example.team13
 
-import android.annotation.SuppressLint
 import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
@@ -13,7 +12,7 @@ import kotlinx.android.synthetic.main.activity_main.imageView
 import kotlin.math.*
 
 
-class LinearFilteringActivity : AppCompatActivity() {
+class LinearFilteringActivity: AppCompatActivity(){
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,23 +20,23 @@ class LinearFilteringActivity : AppCompatActivity() {
 
         getImage()
 
-        startThreePointsBtn.setOnClickListener {
+        startThreePointsBtn.setOnClickListener{
             getFirstThreePoints()
         }
 
-        finishThreePointsBtn.setOnClickListener {
+        finishThreePointsBtn.setOnClickListener{
             getSecondThreePoints()
         }
 
-        bilinearBtn.setOnClickListener {
+        bilinearBtn.setOnClickListener{
             bilinearFiltering()
         }
 
-        affineBtn.setOnClickListener {
+        affineBtn.setOnClickListener{
             affineFiltering()
         }
 
-        trilinearBtn.setOnClickListener {
+        trilinearBtn.setOnClickListener{
             trilinearFiltering()
         }
     }
@@ -47,7 +46,7 @@ class LinearFilteringActivity : AppCompatActivity() {
     private var reversePointsCoordinates: Array<Array<Double>> = Array(2) { Array(6) { 0.0 } }
     private lateinit var firstCanvas: Canvas
 
-    private fun getImage() {
+    private fun getImage(){
         val selectedImageURI = intent.getStringExtra("ImageUri")!!.toUri()
         val source = ImageDecoder.createSource(this.contentResolver, selectedImageURI)
         val bmpImage = ImageDecoder.decodeBitmap(source).copy(Bitmap.Config.RGBA_F16, true)
@@ -97,8 +96,7 @@ class LinearFilteringActivity : AppCompatActivity() {
                 for (x in 0..2) {
                     for (y in 0..2) {
                         if (x != i && y != j) {
-                            oneMinor[positionForNewNumber / 2][positionForNewNumber % 2] =
-                                matrix[x][y]
+                            oneMinor[positionForNewNumber / 2][positionForNewNumber % 2] = matrix[x][y]
                             positionForNewNumber += 1
                         }
                     }
@@ -130,11 +128,7 @@ class LinearFilteringActivity : AppCompatActivity() {
         return reverseMatrix
     }
 
-    private fun matrixMultiplication(
-        firstMatrix: Array<Array<Double>>,
-        secondMatrix: Array<Double>
-    ): Array<Double> {
-
+    private fun matrixMultiplication(firstMatrix: Array<Array<Double>>, secondMatrix: Array<Double>): Array<Double> {
         val resultMatrix: Array<Double> = Array(3) { 0.0 }
 
         for (i in 0..2) {
@@ -214,21 +208,15 @@ class LinearFilteringActivity : AppCompatActivity() {
             affineTransformation[1][0] + x * affineTransformation[1][1] + y * affineTransformation[1][2]
         val coordinates: Array<Array<Int>> = Array(2) { Array(4) { 0 } }
         coordinates[0] = arrayOf(
-            floor(x1).toInt(), ceil(x1).toInt(), floor(x1).toInt(), ceil(
-                x1
-            ).toInt()
-        )
+            floor(x1).toInt(), ceil(x1).toInt(), floor(x1).toInt(), ceil(x1).toInt())
         coordinates[1] = arrayOf(
-            floor(y1).toInt(), floor(y1).toInt(), ceil(y1).toInt(), ceil(
-                y1
-            ).toInt()
-        )
+            floor(y1).toInt(), floor(y1).toInt(), ceil(y1).toInt(), ceil(y1).toInt())
         val pictureWidth: Int = currentBitmap.width
         val pictureHeight: Int = currentBitmap.height
 
         for (i in 0..3) {
-            coordinates[0][i] = normalizeValue(pictureWidth - 1, coordinates[0][i])
-            coordinates[1][i] = normalizeValue(pictureHeight - 1, coordinates[1][i])
+            coordinates[0][i] = normalizeValue(0, pictureWidth - 1, coordinates[0][i])
+            coordinates[1][i] = normalizeValue(0, pictureHeight - 1, coordinates[1][i])
         }
 
         val firstPixel: Int = currentBitmap.getPixel(coordinates[0][0], coordinates[1][0])
@@ -236,15 +224,7 @@ class LinearFilteringActivity : AppCompatActivity() {
         val thirdPixel: Int = currentBitmap.getPixel(coordinates[0][2], coordinates[1][2])
         val fourthPixel: Int = currentBitmap.getPixel(coordinates[0][3], coordinates[1][3])
 
-        return makeInterpolation(
-            coordinates,
-            firstPixel,
-            secondPixel,
-            thirdPixel,
-            fourthPixel,
-            x1,
-            y1
-        )
+        return makeInterpolation(coordinates, firstPixel, secondPixel, thirdPixel, fourthPixel, x1, y1)
     }
 
     private fun makeInterpolation(
@@ -254,8 +234,7 @@ class LinearFilteringActivity : AppCompatActivity() {
         thirdPixel: Int,
         fourthPixel: Int,
         x1: Double,
-        y1: Double
-    ): Int {
+        y1: Double): Int {
 
         val newAlpha = getInterpolation(
             Color.alpha(firstPixel), Color.alpha(secondPixel), Color.alpha(
@@ -285,11 +264,7 @@ class LinearFilteringActivity : AppCompatActivity() {
         return Color.argb(newAlpha, newRed, newGreen, newBlue)
     }
 
-    private fun getImageWithDecrease(
-        widthBitmap: Int,
-        heightBitmap: Int,
-        originalBitmap: Bitmap
-    ): Bitmap {
+    private fun getImageWithDecrease(widthBitmap: Int, heightBitmap: Int, originalBitmap: Bitmap): Bitmap {
         var x = widthBitmap
         var y = heightBitmap
         if (widthBitmap % 2 == 1 && widthBitmap > 1) x = widthBitmap - 1
@@ -352,20 +327,16 @@ class LinearFilteringActivity : AppCompatActivity() {
 
         val pictureWidth: Int = currentBitmap.width
         val pictureHeight: Int = currentBitmap.height
-        val x1 =
-            affineTransformation[0][0] + x * affineTransformation[0][1] + y * affineTransformation[0][2]
-        val y1 =
-            affineTransformation[1][0] + x * affineTransformation[1][1] + y * affineTransformation[1][2]
+        val x1 = affineTransformation[0][0] + x * affineTransformation[0][1] + y * affineTransformation[0][2]
+        val y1 = affineTransformation[1][0] + x * affineTransformation[1][1] + y * affineTransformation[1][2]
 
-        val newX = if (x + 1 >= pictureWidth) x - 1
+        val newX: Int = if (x + 1 >= pictureWidth) x - 1
         else x + 1
-        val newY = if (y + 1 >= pictureHeight) y - 1
+        val newY: Int = if (y + 1 >= pictureHeight) y - 1
         else y + 1
 
-        val x2 =
-            affineTransformation[0][0] + newX * affineTransformation[0][1] + newY * affineTransformation[0][2]
-        val y2 =
-            affineTransformation[1][0] + newX * affineTransformation[1][1] + newY * affineTransformation[1][2]
+        val x2 = affineTransformation[0][0] + newX * affineTransformation[0][1] + newY * affineTransformation[0][2]
+        val y2 = affineTransformation[1][0] + newX * affineTransformation[1][1] + newY * affineTransformation[1][2]
 
         val kx = abs(x1 - x2)
         val ky = abs(y1 - y2)
@@ -380,10 +351,8 @@ class LinearFilteringActivity : AppCompatActivity() {
         currentBitmap: Bitmap
     ): Int {
 
-        val x1 =
-            affineTransformation[0][0] + x * affineTransformation[0][1] + y * affineTransformation[0][2]
-        val y1 =
-            affineTransformation[1][0] + x * affineTransformation[1][1] + y * affineTransformation[1][2]
+        val x1 = affineTransformation[0][0] + x * affineTransformation[0][1] + y * affineTransformation[0][2]
+        val y1 = affineTransformation[1][0] + x * affineTransformation[1][1] + y * affineTransformation[1][2]
         var coordinatesX = (x1.roundToInt())
         var coordinatesY = (y1.roundToInt())
         val pictureWidth: Int = currentBitmap.width
@@ -419,7 +388,7 @@ class LinearFilteringActivity : AppCompatActivity() {
         val newPicture = Bitmap.createBitmap(pictureWidth, pictureHeight, bitmapStart.config)
 
         for (i in 0 until pictureWidth) {
-            for (j in 0 until pictureHeight) {
+            for (j in 0  until pictureHeight) {
                 val newPixel = getNewBilinearPixel(affineTransformation, i, j, bitmapStart)
                 newPicture.setPixel(i, j, newPixel)
             }
@@ -452,14 +421,10 @@ class LinearFilteringActivity : AppCompatActivity() {
 
     private fun getTrilinearInterpolation(firstPixel: Int, secondPixel: Int, k: Int, m: Int): Int {
 
-        val newPixelAlpha =
-            (Color.alpha(firstPixel) * (2 * m - k) + Color.alpha(secondPixel) * (k - m)) / m
-        val newPixelRed =
-            (Color.red(firstPixel) * (2 * m - k) + Color.red(secondPixel) * (k - m)) / m
-        val newPixelGreen =
-            (Color.green(firstPixel) * (2 * m - k) + Color.green(secondPixel) * (k - m)) / m
-        val newPixelBlue =
-            (Color.blue(firstPixel) * (2 * m - k) + Color.blue(secondPixel) * (k - m)) / m
+        val newPixelAlpha = (Color.alpha(firstPixel) * (2 * m - k) + Color.alpha(secondPixel) * (k - m)) / m
+        val newPixelRed = (Color.red(firstPixel) * (2 * m - k) + Color.red(secondPixel) * (k - m)) / m
+        val newPixelGreen = (Color.green(firstPixel) * (2 * m - k) + Color.green(secondPixel) * (k - m)) / m
+        val newPixelBlue = (Color.blue(firstPixel) * (2 * m - k) + Color.blue(secondPixel) * (k - m)) / m
 
         return Color.argb(newPixelAlpha, newPixelRed, newPixelGreen, newPixelBlue)
     }
@@ -473,13 +438,11 @@ class LinearFilteringActivity : AppCompatActivity() {
     ): Array<Int> {
         val coordinates: Array<Int> = arrayOf(0, 0)
 
-        var x1 =
-            (affineTransformation[0][0] + x * affineTransformation[0][1] + y * affineTransformation[0][2]).roundToInt()
-        var y1 =
-            (affineTransformation[1][0] + x * affineTransformation[1][1] + y * affineTransformation[1][2]).roundToInt()
+        var x1 = (affineTransformation[0][0] + x * affineTransformation[0][1] + y * affineTransformation[0][2]).roundToInt()
+        var y1 = (affineTransformation[1][0] + x * affineTransformation[1][1] + y * affineTransformation[1][2]).roundToInt()
 
-        x1 = normalizeValue(pictureWidth - 1, x1)
-        y1 = normalizeValue(pictureHeight - 1, y1)
+        x1 = normalizeValue(0, pictureWidth - 1, x1)
+        y1 = normalizeValue(0, pictureHeight - 1, y1)
 
         coordinates[0] = x1
         coordinates[1] = y1
@@ -487,27 +450,22 @@ class LinearFilteringActivity : AppCompatActivity() {
         return coordinates
     }
 
-    private fun normalizeValue(max: Int, value: Int): Int {
-
+    private fun normalizeValue(min: Int, max: Int, value: Int): Int {
         var newValue = value
 
         if (value > max) {
             newValue = max
-        } else {
-            if (value < 0) {
-                newValue = 0
+        }
+        else {
+            if (value < min) {
+                newValue = min
             }
         }
 
         return newValue
     }
 
-    private fun getTwoLayersPixels(
-        decrease: Int,
-        x: Int,
-        y: Int,
-        pixels: Array<Bitmap>
-    ): Array<Int> {
+    private fun getTwoLayersPixels(decrease: Int, x: Int, y: Int, pixels: Array<Bitmap>): Array<Int> {
         val twoPixels: Array<Int> = arrayOf(0, 0, 0)
         var degree = 1
         var valueOfdegree = 0
@@ -522,14 +480,15 @@ class LinearFilteringActivity : AppCompatActivity() {
             valueOfdegree += 1
             degree2 = degree
             degree *= 2
-        } else {
+        }
+        else {
             degree2 = degree / 2
         }
 
-        val firstLayerX = normalizeValue(pixels[valueOfdegree].width - 1, x / degree)
-        val firstLayerY = normalizeValue(pixels[valueOfdegree].height - 1, y / degree)
-        val secondLayerX = normalizeValue(pixels[valueOfdegree - 1].width - 1, x / degree2)
-        val secondLayerY = normalizeValue(pixels[valueOfdegree - 1].height - 1, y / degree2)
+        val firstLayerX = normalizeValue(0, pixels[valueOfdegree].width - 1, x / degree)
+        val firstLayerY = normalizeValue(0, pixels[valueOfdegree].height - 1, y / degree)
+        val secondLayerX = normalizeValue(0, pixels[valueOfdegree - 1].width - 1, x / degree2)
+        val secondLayerY = normalizeValue(0, pixels[valueOfdegree - 1].height - 1, y / degree2)
 
         twoPixels[0] = pixels[valueOfdegree].getPixel(firstLayerX, firstLayerY)
         twoPixels[1] = pixels[valueOfdegree - 1].getPixel(secondLayerX, secondLayerY)
@@ -538,6 +497,30 @@ class LinearFilteringActivity : AppCompatActivity() {
         return twoPixels
     }
 
+    private fun printAllPictures(pictures: Array<Bitmap>) {
+        val imageViewStart: ImageView = findViewById(R.id.imageView)
+        val bitmapStart = (imageViewStart.drawable as BitmapDrawable).bitmap
+        val pictureWidth: Int = bitmapStart.width
+        val pictureHeight: Int = bitmapStart.height
+        val newPicture = Bitmap.createBitmap(pictureWidth, pictureHeight, bitmapStart.config)
+
+        var sumWidths = 0
+        val numPictures = pictures.size
+
+        for (i in 1 until numPictures) {
+            val currentWidth: Int = pictures[i].width
+            val currentHeight: Int = pictures[i].height
+
+            for (j in 0 until currentWidth) {
+                for (k in 0 until currentHeight) {
+                    val currentPixel = pictures[i].getPixel(j, k)
+                    newPicture.setPixel(sumWidths + j, k, currentPixel)
+                }
+            }
+            sumWidths += (currentWidth - 1)
+        }
+        imageView.setImageBitmap(newPicture)
+    }
 
     private fun trilinearFiltering() {
         getImage()
@@ -644,29 +627,29 @@ class LinearFilteringActivity : AppCompatActivity() {
         }
     }
 
-    private fun newCoordinates(x: Double, y: Double, firstCanvas: Canvas): Boolean {
+    fun newCoordinates(x: Double, y: Double, firstCanvas: Canvas): Boolean {
         if (stepNum < 3 && x >= 0 && y >= 0) {
             newCoordinatesFirst(x, y, firstCanvas)
-        } else {
+        }
+        else {
             newCoordinatesSecond(x, y, firstCanvas)
         }
         return true
     }
 
 
-    @SuppressLint("ClickableViewAccessibility")
     private fun getFirstThreePoints() {
         val imageViewStart: ImageView = findViewById(R.id.imageView)
-        val bitmapStart = (imageViewStart.drawable as BitmapDrawable).bitmap
+        val bitmapStart = (imageViewStart.getDrawable() as BitmapDrawable).bitmap
         firstCanvas = Canvas(bitmapStart)
 
         imageViewStart.setOnTouchListener { arg0, event ->
-            val inverse = Matrix()
-            imageViewStart.imageMatrix.invert(inverse)
+            var inverse = Matrix()
+            imageViewStart.getImageMatrix().invert(inverse)
             val pts = floatArrayOf(event.x, event.y)
             inverse.mapPoints(pts)
-            val x = pts[0].toDouble()
-            val y = pts[1].toDouble()
+            var x = pts[0].toDouble()
+            var y = pts[1].toDouble()
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
                     newCoordinates(x, y, firstCanvas)

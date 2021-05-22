@@ -127,7 +127,6 @@ class FiltersActivity : AppCompatActivity() {
                 val pixelBlue = Color.blue(pixelColor)
 
                 var newIndex: Int = i + (sizeArr - 1) / 2
-                println("hhh: " + gaussianDistribution[newIndex])
                 newPixelRed += ((pixelRed * gaussianDistribution[newIndex]).roundToInt())
                 newPixelGreen += ((pixelGreen * gaussianDistribution[newIndex]).roundToInt())
                 newPixelBlue += ((pixelBlue * gaussianDistribution[newIndex]).roundToInt())
