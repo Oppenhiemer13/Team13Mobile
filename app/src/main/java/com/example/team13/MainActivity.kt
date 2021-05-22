@@ -104,6 +104,10 @@ class MainActivity : AppCompatActivity() {
         linearFilterBtn.setOnClickListener {
             startNewIntent(this, LinearFilteringActivity::class.java)
         }
+
+        retBtn.setOnClickListener {
+            startNewIntent(this, RetouchingActivity::class.java)
+        }
     }
 
     override fun onRequestPermissionsResult(
@@ -258,6 +262,7 @@ class MainActivity : AppCompatActivity() {
         unsharpMaskBtn.isEnabled = false
         rotateBtn.isEnabled = false
         linearFilterBtn.isEnabled = false
+        retBtn.isEnabled = false
     }
 
     private fun enableButtons() {
@@ -268,6 +273,7 @@ class MainActivity : AppCompatActivity() {
         unsharpMaskBtn.isEnabled = true
         rotateBtn.isEnabled = true
         linearFilterBtn.isEnabled = true
+        retBtn.isEnabled = true
     }
 }
 
