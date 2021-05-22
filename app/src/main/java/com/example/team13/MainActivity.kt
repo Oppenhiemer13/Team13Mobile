@@ -112,17 +112,12 @@ class MainActivity : AppCompatActivity() {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-
         if (requestCode == 111 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             loadImgBtn.isEnabled = true
         }
 
-        if (requestCode == 112 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        if (requestCode == 111 && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
             cameraBtn.isEnabled = true
-        }
-
-        if (requestCode == 113 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            actionBtn.isEnabled = true
         }
     }
 
@@ -192,42 +187,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun isEnabledCheck() {
 
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.READ_EXTERNAL_STORAGE
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {  //запрос на доступ к данным
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
-                111
-            )
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.CAMERA), 111)
         } else {
             loadImgBtn.isEnabled = true
-        }
-
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.CAMERA
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), 112)
-        } else {
             cameraBtn.isEnabled = true
-        }
-
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                113
-            )
-        } else {
-            actionBtn.isEnabled = true
         }
     }
 
