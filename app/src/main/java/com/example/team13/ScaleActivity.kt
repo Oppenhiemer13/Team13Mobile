@@ -5,8 +5,10 @@ import android.graphics.Color
 import android.graphics.ImageDecoder
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.net.toUri
+import androidx.core.view.isVisible
 import kotlinx.android.synthetic.main.scale_activity.*
 import kotlinx.android.synthetic.main.scale_activity.actionBtn
 import kotlinx.android.synthetic.main.scale_activity.imageView
@@ -21,7 +23,13 @@ class ScaleActivity : AppCompatActivity() {
         getImage()
 
         actionBtn.setOnClickListener {
-            interpolation()
+
+            if(scaleEditText.text.toString().toDouble() > 0.0) {
+                interpolation()
+            }
+            else{
+                Toast.makeText(this, "Enter a coefficient greater than 0", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
