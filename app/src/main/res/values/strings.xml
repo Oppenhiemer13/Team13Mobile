@@ -30,6 +30,9 @@
     <string name="radius">Radius</string>
     <string name="amount">Amount</string>
     <string name="seekBar">SeekBar</string>
+    <string name="radiusString">radius</string>
+    <string name="ratioString">ratio</string>
+    <string name="retouchString">Retouch</string>
 </resources>
 
 

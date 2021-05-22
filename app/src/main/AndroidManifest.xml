@@ -19,6 +19,7 @@
         android:supportsRtl="true"
         android:theme="@style/Team13Style"
         tools:ignore="ExtraText">
+        <activity android:name=".RetouchingActivity"></activity>
         <activity android:name=".RotateActivity" />
         <activity android:name=".FiltersActivity" />
         <activity android:name=".ScaleActivity" />
